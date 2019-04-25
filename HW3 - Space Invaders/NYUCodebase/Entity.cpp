@@ -15,11 +15,11 @@ void Entity::Draw(ShaderProgram &p, float elapsed){
         glEnableVertexAttribArray(p.positionAttribute);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glDisableVertexAttribArray(p.positionAttribute);
-        }
-        else{
-            sprite.Draw(p, x, y);
-        }
     }
+    else{
+        sprite.Draw(p, x, y);
+    }
+}
 Entity::Entity(float x, float y, float x_velocity, float y_velocity, float width, float height , float r=1, float g=1, float b=1, float u=-5, float v=-5, int textureID=0, float size=-5): x(x), y(y), x_velocity(x_velocity), y_velocity(y_velocity), width(width), height(height), r(r), g(g), b(b), sprite(SheetSprite(textureID, u, v, width, height, size)){}
 void Entity::update(float elapsed){
     x+=x_velocity *elapsed;
@@ -34,3 +34,4 @@ bool Entity::collision(Entity &e){
     }
     return false;
 }
+

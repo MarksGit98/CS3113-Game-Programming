@@ -8,7 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		6D5A86AE19AE5C710066C1FD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5A86AD19AE5C710066C1FD /* Cocoa.framework */; };
+		6D5A86B819AE5C710066C1FD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6D5A86B619AE5C710066C1FD /* InfoPlist.strings */; };
 		6D5A86BA19AE5C710066C1FD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D5A86B919AE5C710066C1FD /* main.cpp */; };
+		6D5A86BE19AE5C710066C1FD /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 6D5A86BC19AE5C710066C1FD /* Credits.rtf */; };
+		6D5A86C619AE5C710066C1FD /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D5A86C519AE5C710066C1FD /* Images.xcassets */; };
 		6D5A86E319AE5CD10066C1FD /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5A86E219AE5CD10066C1FD /* SDL2.framework */; };
 		6D5AC2D019AE6280004CB1BF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5AC2CF19AE6280004CB1BF /* OpenGL.framework */; };
 		6D5AC2D219AE6A1E004CB1BF /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5AC2D119AE6A1E004CB1BF /* SDL2_image.framework */; };
@@ -17,12 +20,11 @@
 		6DEF23C11B96CC2600BCE792 /* fragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 6DEF23BB1B96CC2600BCE792 /* fragment.glsl */; };
 		6DEF23C31B96CC2600BCE792 /* ShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DEF23BE1B96CC2600BCE792 /* ShaderProgram.cpp */; };
 		6DEF23C41B96CC2600BCE792 /* vertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 6DEF23C01B96CC2600BCE792 /* vertex.glsl */; };
-		A18ED184226EACAF00C0E2C0 /* font.png in Resources */ = {isa = PBXBuildFile; fileRef = A18ED183226EACAF00C0E2C0 /* font.png */; };
-		A18ED186226EACC100C0E2C0 /* ships.png in Resources */ = {isa = PBXBuildFile; fileRef = A18ED185226EACC100C0E2C0 /* ships.png */; };
-		A18ED188226EB0D400C0E2C0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A18ED187226EB0D400C0E2C0 /* Images.xcassets */; };
-		A18ED18A226EBD5400C0E2C0 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = A18ED189226EBD5300C0E2C0 /* background.png */; };
-		A69F92D82178031E007808D1 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69F92D62178031E007808D1 /* Entity.cpp */; };
-		A69F92DB2178054C007808D1 /* SheetSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A69F92D92178054C007808D1 /* SheetSprite.cpp */; };
+		A16A388822718C49004A37E7 /* SheetSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A16A388622718C49004A37E7 /* SheetSprite.cpp */; };
+		A16A388B22718C8E004A37E7 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A16A388922718C8E004A37E7 /* Entity.cpp */; };
+		A16A388D22718CBA004A37E7 /* ships.png in Resources */ = {isa = PBXBuildFile; fileRef = A16A388C22718CBA004A37E7 /* ships.png */; };
+		A16A388F22718CC1004A37E7 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = A16A388E22718CC1004A37E7 /* background.png */; };
+		A16A389122718D1A004A37E7 /* font.png in Resources */ = {isa = PBXBuildFile; fileRef = A16A389022718D1A004A37E7 /* font.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +33,11 @@
 		6D5A86B019AE5C710066C1FD /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		6D5A86B119AE5C710066C1FD /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		6D5A86B219AE5C710066C1FD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		6D5A86B519AE5C710066C1FD /* NYUCodebase-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NYUCodebase-Info.plist"; sourceTree = "<group>"; };
+		6D5A86B719AE5C710066C1FD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6D5A86B919AE5C710066C1FD /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		6D5A86BD19AE5C710066C1FD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		6D5A86C519AE5C710066C1FD /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		6D5A86E219AE5CD10066C1FD /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		6D5AC2CF19AE6280004CB1BF /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		6D5AC2D119AE6A1E004CB1BF /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
@@ -41,14 +47,13 @@
 		6DEF23BE1B96CC2600BCE792 /* ShaderProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderProgram.cpp; sourceTree = "<group>"; };
 		6DEF23BF1B96CC2600BCE792 /* ShaderProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderProgram.h; sourceTree = "<group>"; };
 		6DEF23C01B96CC2600BCE792 /* vertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vertex.glsl; sourceTree = "<group>"; };
-		A18ED183226EACAF00C0E2C0 /* font.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = font.png; sourceTree = "<group>"; };
-		A18ED185226EACC100C0E2C0 /* ships.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ships.png; sourceTree = "<group>"; };
-		A18ED187226EB0D400C0E2C0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		A18ED189226EBD5300C0E2C0 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
-		A69F92D62178031E007808D1 /* Entity.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
-		A69F92D72178031E007808D1 /* Entity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Entity.hpp; sourceTree = "<group>"; };
-		A69F92D92178054C007808D1 /* SheetSprite.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SheetSprite.cpp; sourceTree = "<group>"; };
-		A69F92DA2178054C007808D1 /* SheetSprite.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SheetSprite.hpp; sourceTree = "<group>"; };
+		A16A388622718C49004A37E7 /* SheetSprite.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SheetSprite.cpp; sourceTree = "<group>"; };
+		A16A388722718C49004A37E7 /* SheetSprite.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SheetSprite.hpp; sourceTree = "<group>"; };
+		A16A388922718C8E004A37E7 /* Entity.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
+		A16A388A22718C8E004A37E7 /* Entity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Entity.hpp; sourceTree = "<group>"; };
+		A16A388C22718CBA004A37E7 /* ships.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ships.png; path = "../../HW3 - Space Invaders/NYUCodebase/ships.png"; sourceTree = "<group>"; };
+		A16A388E22718CC1004A37E7 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = background.png; path = "../../HW3 - Space Invaders/NYUCodebase/background.png"; sourceTree = "<group>"; };
+		A16A389022718D1A004A37E7 /* font.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = font.png; path = "../../HW3 - Space Invaders/NYUCodebase/font.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,7 +122,10 @@
 		6D5A86B419AE5C710066C1FD /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				A18ED187226EB0D400C0E2C0 /* Images.xcassets */,
+				6D5A86C519AE5C710066C1FD /* Images.xcassets */,
+				6D5A86B519AE5C710066C1FD /* NYUCodebase-Info.plist */,
+				6D5A86B619AE5C710066C1FD /* InfoPlist.strings */,
+				6D5A86BC19AE5C710066C1FD /* Credits.rtf */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -125,9 +133,9 @@
 		6D5A86E119AE5CAA0066C1FD /* Code */ = {
 			isa = PBXGroup;
 			children = (
-				A18ED189226EBD5300C0E2C0 /* background.png */,
-				A18ED183226EACAF00C0E2C0 /* font.png */,
-				A18ED185226EACC100C0E2C0 /* ships.png */,
+				A16A388E22718CC1004A37E7 /* background.png */,
+				A16A388C22718CBA004A37E7 /* ships.png */,
+				A16A389022718D1A004A37E7 /* font.png */,
 				6DEF23BB1B96CC2600BCE792 /* fragment.glsl */,
 				6DE9D2F01BA6AB8C002D599C /* fragment_textured.glsl */,
 				6DC707691BA7273500225B7D /* vertex_textured.glsl */,
@@ -135,10 +143,10 @@
 				6DEF23BF1B96CC2600BCE792 /* ShaderProgram.h */,
 				6DEF23C01B96CC2600BCE792 /* vertex.glsl */,
 				6D5A86B919AE5C710066C1FD /* main.cpp */,
-				A69F92D62178031E007808D1 /* Entity.cpp */,
-				A69F92D72178031E007808D1 /* Entity.hpp */,
-				A69F92D92178054C007808D1 /* SheetSprite.cpp */,
-				A69F92DA2178054C007808D1 /* SheetSprite.hpp */,
+				A16A388622718C49004A37E7 /* SheetSprite.cpp */,
+				A16A388922718C8E004A37E7 /* Entity.cpp */,
+				A16A388A22718C8E004A37E7 /* Entity.hpp */,
+				A16A388722718C49004A37E7 /* SheetSprite.hpp */,
 			);
 			name = Code;
 			sourceTree = "<group>";
@@ -196,13 +204,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A18ED188226EB0D400C0E2C0 /* Images.xcassets in Resources */,
-				A18ED18A226EBD5400C0E2C0 /* background.png in Resources */,
-				A18ED186226EACC100C0E2C0 /* ships.png in Resources */,
+				6D5A86B819AE5C710066C1FD /* InfoPlist.strings in Resources */,
 				6DEF23C11B96CC2600BCE792 /* fragment.glsl in Resources */,
-				A18ED184226EACAF00C0E2C0 /* font.png in Resources */,
 				6DE9D2F11BA6AB8C002D599C /* fragment_textured.glsl in Resources */,
+				A16A388D22718CBA004A37E7 /* ships.png in Resources */,
+				6D5A86C619AE5C710066C1FD /* Images.xcassets in Resources */,
+				6D5A86BE19AE5C710066C1FD /* Credits.rtf in Resources */,
+				A16A389122718D1A004A37E7 /* font.png in Resources */,
 				6DEF23C41B96CC2600BCE792 /* vertex.glsl in Resources */,
+				A16A388F22718CC1004A37E7 /* background.png in Resources */,
 				6DC7076A1BA7273500225B7D /* vertex_textured.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -214,14 +224,33 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A69F92DB2178054C007808D1 /* SheetSprite.cpp in Sources */,
+				A16A388B22718C8E004A37E7 /* Entity.cpp in Sources */,
 				6DEF23C31B96CC2600BCE792 /* ShaderProgram.cpp in Sources */,
-				A69F92D82178031E007808D1 /* Entity.cpp in Sources */,
+				A16A388822718C49004A37E7 /* SheetSprite.cpp in Sources */,
 				6D5A86BA19AE5C710066C1FD /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		6D5A86B619AE5C710066C1FD /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6D5A86B719AE5C710066C1FD /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		6D5A86BC19AE5C710066C1FD /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6D5A86BD19AE5C710066C1FD /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		6D5A86D919AE5C710066C1FD /* Debug */ = {

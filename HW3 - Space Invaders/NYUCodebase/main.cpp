@@ -13,12 +13,6 @@
 #include "glm/gtc/matrix_transform.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-
-#ifdef _WINDOWS
-#define RESOURCE_FOLDER ""
-#else
-#define RESOURCE_FOLDER "NYUCodebase.app/Contents/Resources/"
-#endif
 #include "Entity.hpp"
 
 using namespace std;
@@ -130,15 +124,15 @@ public:
     }
 };
 class Game{
-    public:
+public:
     void Setup(){
         SDL_Init(SDL_INIT_VIDEO);
         displayWindow = SDL_CreateWindow("Space Invaders", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 360, SDL_WINDOW_OPENGL);
         SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
         SDL_GL_MakeCurrent(displayWindow, context);
-        #ifdef _WINDOWS
-                glewInit();
-        #endif
+#ifdef _WINDOWS
+        glewInit();
+#endif
         glViewport(0, 0, 640, 360);
         projectionMatrix = glm::ortho(-1.77f,1.77f, -1.0f, 1.0f, -1.0f, 1.0f);
         glEnable(GL_BLEND);
@@ -157,7 +151,7 @@ class Game{
         //Load Sprite and Font textures
         spriteSheetTexture = LoadTexture("ships.png");
         fontTexture = LoadTexture("font.png");
-
+        
     }
     void Events(){
         while (SDL_PollEvent(&event)) {
@@ -294,7 +288,7 @@ int main(int argc, char *argv[]){
     SheetSprite playerShip = SheetSprite(spriteSheetTexture, 113.0f/1024.0f, 865.0f/1024.0f, 113.0f/1024.0f, 75.0f/1024.0f, 0.20f);
     SheetSprite ship = SheetSprite(spriteSheetTexture, 424.0f/1024.0f, 730.0f/1024.0f, 93.0f/1024.0f, 85.0f/1024.0f, 0.20f);
     SheetSprite bullet = SheetSprite(spriteSheetTexture, 850.0f/1024.0f, 360.0f/1024.0f, 10.0f/1024.0f, 60.0f/1024.0f, 0.25f);
-
+    
     entities.push_back(Entity(0.0,-0.825,-0.05,0.0,playerShip.width,playerShip.height,0,0,0,playerShip.u,playerShip.v,playerShip.textureID, playerShip.size));
     float x = -1.25;
     float y = 0.15;

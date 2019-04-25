@@ -1,3 +1,4 @@
+
 uniform sampler2D diffuse;
 varying vec2 texCoordVar;
 

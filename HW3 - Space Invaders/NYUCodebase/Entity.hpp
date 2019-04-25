@@ -19,3 +19,4 @@ public:
     float x_velocity, y_velocity;
     float r,g,b;
 };
+
