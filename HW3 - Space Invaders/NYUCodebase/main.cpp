@@ -23,13 +23,13 @@ bool done = false;
 glm::mat4 modelMatrix = glm::mat4(1.0f);
 glm::mat4 viewMatrix = glm::mat4(1.0f);
 float lastFrameTicks = 0.0f;
-ShaderProgram untexteredShader;
+ShaderProgram program2;
 float elapsed;
 GLuint spriteSheetTexture;
 GLuint backgroundImage; //didn't end up using this
 int num_of_ships = 24; //24 total ships
 
-ShaderProgram texteredShader;
+ShaderProgram program;
 vector<Entity> entities;
 vector<Entity> ships;
 vector<Entity> bullets;
@@ -38,7 +38,7 @@ int bulletInd = 0;
 GLuint fontTexture;
 int score = 0;
 float bulletTimer = 0;
-enum GameMode { STATE_MAIN_MENU, STATE_GAME_LEVEL};
+enum GameMode {STATE_MAIN_MENU, STATE_GAME_LEVEL};
 GameMode mode = STATE_MAIN_MENU;
 
 SDL_Window* displayWindow;
@@ -104,7 +104,7 @@ class mainMenu {
 public:
     void Clean(){}
     void Render() {
-        DrawText(texteredShader, fontTexture, "Space to Start", -0.77,0.0,0.1,0.01);
+        DrawText(program, fontTexture, "Space to Start", -0.77,0.0,0.1,0.01);
     }
     void Update() {
         glClear(GL_COLOR_BUFFER_BIT);
@@ -137,14 +137,14 @@ public:
         projectionMatrix = glm::ortho(-1.77f,1.77f, -1.0f, 1.0f, -1.0f, 1.0f);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        texteredShader.Load("vertex_textured.glsl", "fragment_textured.glsl");
-        untexteredShader.Load("vertex.glsl", "fragment.glsl");
-        untexteredShader.SetViewMatrix(viewMatrix);
-        untexteredShader.SetProjectionMatrix(projectionMatrix);
-        untexteredShader.SetModelMatrix(modelMatrix);
-        texteredShader.SetViewMatrix(viewMatrix);
-        texteredShader.SetProjectionMatrix(projectionMatrix);
-        texteredShader.SetModelMatrix(modelMatrix);
+        program.Load("vertex_textured.glsl", "fragment_textured.glsl");
+        program2.Load("vertex.glsl", "fragment.glsl");
+        program2.SetViewMatrix(viewMatrix);
+        program2.SetProjectionMatrix(projectionMatrix);
+        program2.SetModelMatrix(modelMatrix);
+        program.SetViewMatrix(viewMatrix);
+        program.SetProjectionMatrix(projectionMatrix);
+        program.SetModelMatrix(modelMatrix);
         
         //Load Background Image
         backgroundImage = LoadTexture("background.png"); //unused
@@ -219,18 +219,18 @@ public:
         }
         bulletTimer += elapsed;
         if(score == num_of_ships){
-            DrawText(texteredShader, fontTexture, "You Win!", -0.95, 0.0, 0.25, 0.01);
+            DrawText(program, fontTexture, "You Win!", -0.95, 0.0, 0.25, 0.01);
         }
         
     }
     void Render(){
-        DrawText(texteredShader, fontTexture, "Score: "+to_string(score), -1.70,0.95,0.05,0.01);
-        entities[0].Draw(texteredShader, elapsed);
+        DrawText(program, fontTexture, "Score: "+to_string(score), -1.70,0.95,0.05,0.01);
+        entities[0].Draw(program, elapsed);
         for(Entity &a: ships){
-            a.Draw(texteredShader, elapsed);
+            a.Draw(program, elapsed);
         }
         for(Entity &b: bullets){
-            b.Draw(texteredShader, elapsed);
+            b.Draw(program, elapsed);
         }
     }
     void Clean(){
