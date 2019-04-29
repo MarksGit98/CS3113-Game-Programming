@@ -23,16 +23,15 @@ bool done = false;
 glm::mat4 modelMatrix = glm::mat4(1.0f);
 glm::mat4 viewMatrix = glm::mat4(1.0f);
 float lastFrameTicks = 0.0f;
-ShaderProgram program2;
 float elapsed;
 GLuint spriteSheetTexture;
-GLuint backgroundImage; //didn't end up using this
 int num_of_ships = 24; //24 total ships
-
 ShaderProgram program;
-vector<Entity> entities;
-vector<Entity> ships;
-vector<Entity> bullets;
+ShaderProgram program2;
+
+vector<Entity> entities; //holds player ship
+vector<Entity> ships; //holds enemy ships
+vector<Entity> bullets; //holds player bullets
 float shipsVelocity = 0.25;
 int bulletInd = 0;
 GLuint fontTexture;
@@ -61,7 +60,7 @@ GLuint LoadTexture(const char *filePath) {
 }
 
 void DrawText(ShaderProgram &program, int fontTexture, string text, float x, float y, float size, float spacing) {
-    float texture_size = 1.0 / 16.0f;
+    float text_size = 1.0 / 16.0f;
     vector<float> vertexData;
     vector<float> texCoordData;
     glm::mat4 textModelMatrix = glm::mat4(1.0f);
@@ -79,11 +78,11 @@ void DrawText(ShaderProgram &program, int fontTexture, string text, float x, flo
         });
         texCoordData.insert(texCoordData.end(), {
             text_x, text_y,
-            text_x, text_y + texture_size,
-            text_x + texture_size, text_y,
-            text_x + texture_size, text_y + texture_size,
-            text_x + texture_size, text_y,
-            text_x, text_y + texture_size,
+            text_x, text_y + text_size,
+            text_x + text_size, text_y,
+            text_x + text_size, text_y + text_size,
+            text_x + text_size, text_y,
+            text_x, text_y + text_size,
         });
     }
     glUseProgram(program.programID);
@@ -130,9 +129,6 @@ public:
         displayWindow = SDL_CreateWindow("Space Invaders", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 360, SDL_WINDOW_OPENGL);
         SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
         SDL_GL_MakeCurrent(displayWindow, context);
-#ifdef _WINDOWS
-        glewInit();
-#endif
         glViewport(0, 0, 640, 360);
         projectionMatrix = glm::ortho(-1.77f,1.77f, -1.0f, 1.0f, -1.0f, 1.0f);
         glEnable(GL_BLEND);
@@ -145,9 +141,7 @@ public:
         program.SetViewMatrix(viewMatrix);
         program.SetProjectionMatrix(projectionMatrix);
         program.SetModelMatrix(modelMatrix);
-        
-        //Load Background Image
-        backgroundImage = LoadTexture("background.png"); //unused
+    
         //Load Sprite and Font textures
         spriteSheetTexture = LoadTexture("ships.png");
         fontTexture = LoadTexture("font.png");
@@ -237,12 +231,10 @@ public:
     }
 };
 
+//Create instances of game and mainMenu
 Game game;
 mainMenu menu;
 
-void Setup(){
-    game.Setup();
-}
 void Events(){
     switch(mode){
         case STATE_MAIN_MENU:
@@ -284,24 +276,31 @@ void Clean(){
     }
 }
 int main(int argc, char *argv[]){
-    Setup();
+    game.Setup();
+    
+    //Create instances of the game sprites
     SheetSprite playerShip = SheetSprite(spriteSheetTexture, 113.0f/1024.0f, 865.0f/1024.0f, 113.0f/1024.0f, 75.0f/1024.0f, 0.20f);
     SheetSprite ship = SheetSprite(spriteSheetTexture, 424.0f/1024.0f, 730.0f/1024.0f, 93.0f/1024.0f, 85.0f/1024.0f, 0.20f);
     SheetSprite bullet = SheetSprite(spriteSheetTexture, 850.0f/1024.0f, 360.0f/1024.0f, 10.0f/1024.0f, 60.0f/1024.0f, 0.25f);
     
-    entities.push_back(Entity(0.0,-0.825,-0.05,0.0,playerShip.width,playerShip.height,0,0,0,playerShip.u,playerShip.v,playerShip.textureID, playerShip.size));
+    //Vector of playerShips
+    Entity newPlayerShip(0.0,-0.825,-0.05,0.0,playerShip.width,playerShip.height,0,0,0,playerShip.u,playerShip.v,playerShip.textureID, playerShip.size);
+    entities.push_back(newPlayerShip);
+  
     float x = -1.25;
     float y = 0.15;
     for(int i = 0; i <3; i++){ //3 ships per column
         x=-1.25;
         for(int j = 0; j < 8; j++){ //8 ships per row
-            ships.push_back(Entity(x,y,0.5,0,ship.width,ship.height,0,0,0,ship.u,ship.v,ship.textureID, ship.size));
+            Entity newEnemyShip(x,y,0.5,0,ship.width,ship.height,0,0,0,ship.u,ship.v,ship.textureID, ship.size);
+            ships.push_back(newEnemyShip);
             x+=0.325;
         }
         y+=0.20;
     }
     for(int i = 0; i <20; i++){
-        bullets.push_back(Entity(-100,-100,0,5,bullet.width,bullet.height,0,0,0,bullet.u,bullet.v,bullet.textureID, bullet.size));
+        Entity newBullet(-100,-100,0,5,bullet.width,bullet.height,0,0,0,bullet.u,bullet.v,bullet.textureID, bullet.size);
+        bullets.push_back(newBullet);
     }
     while (!done) {
         Events();

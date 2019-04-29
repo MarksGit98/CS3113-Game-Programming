@@ -1,9 +1,7 @@
 //Platformer Demo
 //Mark Bekker
 
-#ifdef _WINDOWS
-#include <GL/glew.h>
-#endif
+
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_image.h>
@@ -14,9 +12,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "FlareMap.hpp"
-
-#ifdef _WINDOWS
-#endif
 #include "Entity.hpp"
 
 #define FIXED_TIMESTEP 0.0166666f
@@ -137,13 +132,13 @@ void worldToTileCoordinates(float worldX, float worldY, int *map_X, int *map_Y) 
 bool playerCollideBottom(){ //handle bottom collision with block
     int map_X = 0;
     int map_Y = 0;
-    map_X = (int)(entities[0].position.x / tileSize);
-    map_Y = (int)((entities[0].position.y - (tileSize/ 2)) / -tileSize);
+    map_X = (entities[0].position.x / tileSize);
+    map_Y = ((entities[0].position.y - (tileSize/ 2)) / -tileSize);
     if(map_X < map.mapWidth && map_Y < map.mapHeight){
         for(int palpableID: palpables){
             if(map.mapData[map_Y][map_X] == palpableID){
                 entities[0].collidedBottom = true;
-                entities[0].position.y += fabs((-tileSize * map_Y) - (entities[0].position.y - tileSize/2))+.001;
+                entities[0].position.y += fabs((-tileSize * map_Y) - (entities[0].position.y - tileSize/2))+0.001;
                 JumpOn = true;
                 return true;
             }
@@ -155,12 +150,12 @@ bool playerCollideBottom(){ //handle bottom collision with block
 bool playerCollideTop(){ //handle top collision with block
     int map_X = 0;
     int map_Y = 0;
-    map_X = (int)(entities[0].position.x / tileSize);
-    map_Y = (int)((entities[0].position.y + (entities[0].height / 2)) / -tileSize);
+    map_X = (entities[0].position.x / tileSize);
+    map_Y = ((entities[0].position.y + (entities[0].height / 2)) / -tileSize);
     if(map_X < map.mapWidth && map_Y < map.mapHeight){
         for(int palpableID: palpables){
             if(map.mapData[map_Y][map_X] == palpableID){
-                entities[0].position.y -= fabs(((-tileSize * map_Y) -tileSize) - (entities[0].position.y + entities[0].height/2))+.001;
+                entities[0].position.y -= fabs(((-tileSize * map_Y) - tileSize) - (entities[0].position.y + entities[0].height/2))+0.001;
                 return true;
             }
         }
@@ -171,12 +166,12 @@ bool playerCollideTop(){ //handle top collision with block
 bool playerCollideLeft(){ //handle left collision with block
     int map_X =0;
     int map_Y = 0;
-    map_X = (int)((entities[0].position.x - (entities[0].width / 2))/ tileSize);
-    map_Y = (int)(entities[0].position.y / -tileSize);
+    map_X = ((entities[0].position.x - (entities[0].width / 2))/ tileSize);
+    map_Y = (entities[0].position.y / -tileSize);
     if(map_X < map.mapWidth && map_Y < map.mapHeight){
         for(int palpableID: palpables){
             if(map.mapData[map_Y][map_X] == palpableID){
-                entities[0].position.x += fabs(((tileSize * map_X) - tileSize) - (entities[0].position.x - entities[0].width/2))+.001;
+                entities[0].position.x += fabs(((tileSize * map_X) + tileSize) - (entities[0].position.x - entities[0].width/2))+0.001;
                 return true;
             }
         }
@@ -187,13 +182,13 @@ bool playerCollideLeft(){ //handle left collision with block
 bool playerCollideRight(){ //handle right collision with block
     int map_X = 0;
     int map_Y = 0;
-    map_X = (int)((entities[0].position.x + (entities[0].width / 2))/ tileSize);
-    map_Y = (int)(entities[0].position.y / -tileSize);
+    map_X = ((entities[0].position.x + (entities[0].width / 2))/ tileSize);
+    map_Y = (entities[0].position.y / -tileSize);
 
     if(map_X < map.mapWidth && map_Y < map.mapHeight){
         for(int palpableID: palpables){
             if(map.mapData[map_Y][map_X] == palpableID){
-                entities[0].position.x -= fabs(((tileSize * map_X) + tileSize) - (entities[0].position.x + entities[0].width/2))+.001;
+                entities[0].position.x -= fabs(((tileSize * map_X) + tileSize) - (entities[0].position.x + entities[0].width/2))+0.001;
                 return true;
             }
         }
@@ -225,9 +220,7 @@ public:
     }
     void Clean(){}
 };
-void GameOver(){
-    glClearColor(1.0f, 1.0f, 0.1f, 1.0f);
-}
+
 class Game{
 public:
     void Setup(){
@@ -235,9 +228,6 @@ public:
         displayWindow = SDL_CreateWindow("Platformer Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 360, SDL_WINDOW_OPENGL);
         SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
         SDL_GL_MakeCurrent(displayWindow, context);
-#ifdef _WINDOWS
-        glewInit();
-#endif
         glViewport(0, 0, 640, 360);
         projectionMatrix = glm::ortho(-1.77f,1.77f, -1.0f, 1.0f, -1.0f, 1.0f);
         glEnable(GL_BLEND);
@@ -253,9 +243,12 @@ public:
         
         //Load textures
         spriteSheetTexture = LoadTexture("sheet.png");
-        glBindTexture(GL_TEXTURE_2D, spriteSheetTexture);
         fontTexture = LoadTexture("font.png");
+
+        //Load map
         map.Load("MyMap.txt");
+        glBindTexture(GL_TEXTURE_2D, spriteSheetTexture);
+        
         for(int y=0; y < map.mapHeight; y++) {
             for(int x=0; x < map.mapWidth; x++) {
                 if(map.mapData[y][x] != 0 && map.mapData[y][x] != 12){
@@ -299,9 +292,10 @@ public:
     }
     void Update(float elapsedUpdate = elapsed){
         glClear(GL_COLOR_BUFFER_BIT);
-        
         modelMatrix = glm::mat4(1.0f);
         const Uint8 *keys = SDL_GetKeyboardState(NULL);
+        
+        //Handle player movement
         if(keys[SDL_SCANCODE_LEFT]) {
             entities[0].velocity.x = -0.25;
         } else if(keys[SDL_SCANCODE_RIGHT]) {
@@ -311,16 +305,19 @@ public:
             entities[0].velocity.x = 0;
         }
         entities[0].velocity.y -= gravity;
+        
         if(playerCollideBottom()||playerCollideTop()){
             entities[0].velocity.y = 0;
         }
-        playerCollideLeft();
+        if(playerCollideLeft()||playerCollideRight()){
+            entities[0].velocity.x = 0;
+        }
         for(Entity& enemy: enemies){
             if(entities[0].collision(enemy)){
                 score++;
                 enemies.pop_back();
                 delete &enemy;
-                GameOver();
+                glClearColor(1.0f, 1.0f, 0.1f, 1.0f);
             }
         }
         entities[0].update(elapsedUpdate);
@@ -402,8 +399,12 @@ int main(int argc, char *argv[]){
     u = (float)((80) % sprite_count_x) / (float) sprite_count_x;
     v = (float)((80) / sprite_count_x) / (float) sprite_count_y;
     SheetSprite enemy = SheetSprite(spriteSheetTexture,u, v,spriteWidth , spriteHeight, tileSize);
-    entities.push_back(Entity(0,-1.0,-1.0,0,mySprite.width,mySprite.height,0,0,0,mySprite.u,mySprite.v,mySprite.textureID, mySprite.size));
-    enemies.push_back(Entity(1.60,-1.0,-0.1,0.0,enemy.width,enemy.height,0,0,0,enemy.u,enemy.v,enemy.textureID, enemy.size));
+    //Instantiate new enemy and player
+    Entity newPlayer(0,-1.0,-1.0,0,mySprite.width,mySprite.height,0,0,0,mySprite.u,mySprite.v,mySprite.textureID, mySprite.size);
+    Entity newEnemy(1.5,-1.0,-0.1,0.0,enemy.width,enemy.height,0,0,0,enemy.u,enemy.v,enemy.textureID, enemy.size);
+    //Push enemy and player into their respective vectors
+    entities.push_back(newPlayer);
+    enemies.push_back(newEnemy);
     while (!done) {
         float ticks = (float)SDL_GetTicks()/1000.0f;
         elapsed = ticks - lastFrameTicks;

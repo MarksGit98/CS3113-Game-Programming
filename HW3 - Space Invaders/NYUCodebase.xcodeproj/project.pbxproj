@@ -23,7 +23,6 @@
 		A16A388822718C49004A37E7 /* SheetSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A16A388622718C49004A37E7 /* SheetSprite.cpp */; };
 		A16A388B22718C8E004A37E7 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A16A388922718C8E004A37E7 /* Entity.cpp */; };
 		A16A388D22718CBA004A37E7 /* ships.png in Resources */ = {isa = PBXBuildFile; fileRef = A16A388C22718CBA004A37E7 /* ships.png */; };
-		A16A388F22718CC1004A37E7 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = A16A388E22718CC1004A37E7 /* background.png */; };
 		A16A389122718D1A004A37E7 /* font.png in Resources */ = {isa = PBXBuildFile; fileRef = A16A389022718D1A004A37E7 /* font.png */; };
 /* End PBXBuildFile section */
 
@@ -52,7 +51,6 @@
 		A16A388922718C8E004A37E7 /* Entity.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
 		A16A388A22718C8E004A37E7 /* Entity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Entity.hpp; sourceTree = "<group>"; };
 		A16A388C22718CBA004A37E7 /* ships.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ships.png; path = "../../HW3 - Space Invaders/NYUCodebase/ships.png"; sourceTree = "<group>"; };
-		A16A388E22718CC1004A37E7 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = background.png; path = "../../HW3 - Space Invaders/NYUCodebase/background.png"; sourceTree = "<group>"; };
 		A16A389022718D1A004A37E7 /* font.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = font.png; path = "../../HW3 - Space Invaders/NYUCodebase/font.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -133,7 +131,6 @@
 		6D5A86E119AE5CAA0066C1FD /* Code */ = {
 			isa = PBXGroup;
 			children = (
-				A16A388E22718CC1004A37E7 /* background.png */,
 				A16A388C22718CBA004A37E7 /* ships.png */,
 				A16A389022718D1A004A37E7 /* font.png */,
 				6DEF23BB1B96CC2600BCE792 /* fragment.glsl */,
@@ -212,7 +209,6 @@
 				6D5A86BE19AE5C710066C1FD /* Credits.rtf in Resources */,
 				A16A389122718D1A004A37E7 /* font.png in Resources */,
 				6DEF23C41B96CC2600BCE792 /* vertex.glsl in Resources */,
-				A16A388F22718CC1004A37E7 /* background.png in Resources */,
 				6DC7076A1BA7273500225B7D /* vertex_textured.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
