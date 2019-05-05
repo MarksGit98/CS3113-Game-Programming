@@ -19,7 +19,7 @@ void Entity::Draw(ShaderProgram &p, float elapsed){
         sprite.Draw(p, position.x, position.y);
     }
 }
-Entity::Entity(float x, float y, float velocity_x, float velocity_y, float width, float height , float r =1, float g =1, float b =1, float u = -4, float v = -4, int textureID = -4, float size = -4): position(x,y), velocity(velocity_x, velocity_y), width(width), height(height), r(r), g(g), b(b), sprite(SheetSprite(textureID, u, v, width, height, size)){
+Entity::Entity(float x, float y, float velocity_x, float velocity_y, float width, float height , float r=1, float g=1, float b=1, float u=-4, float v=-4, int textureID=-4, float size=-4): position(x,y), velocity(velocity_x, velocity_y), width(width), height(height), r(r), g(g), b(b), sprite(SheetSprite(textureID, u, v, width, height, size)){
 }
 void Entity::update(float elapsed){
     position.x += velocity.x *elapsed;

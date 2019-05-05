@@ -129,6 +129,22 @@ void worldToTileCoordinates(float worldX, float worldY, int *map_X, int *map_Y) 
     *map_X = (int)(worldX / tileSize);
     *map_Y = (int)(worldY / -tileSize);
 }
+bool playerCollideTop(){ //handle top collision with block
+    int map_X = 0;
+    int map_Y = 0;
+    map_X = (entities[0].position.x / tileSize);
+    map_Y = ((entities[0].position.y + (entities[0].height / 2)) / -tileSize);
+    if(map_X < map.mapWidth && map_Y < map.mapHeight){
+        for(int palpableID: palpables){
+            if(map.mapData[map_Y][map_X] == palpableID){
+                entities[0].position.y -= fabs(((-tileSize * map_Y) - tileSize) - (entities[0].position.y + entities[0].height/2))+0.001;
+                return true;
+            }
+        }
+    }
+    entities[0].collidedBottom = false;
+    return false;
+}
 bool playerCollideBottom(){ //handle bottom collision with block
     int map_X = 0;
     int map_Y = 0;
@@ -140,22 +156,6 @@ bool playerCollideBottom(){ //handle bottom collision with block
                 entities[0].collidedBottom = true;
                 entities[0].position.y += fabs((-tileSize * map_Y) - (entities[0].position.y - tileSize/2))+0.001;
                 JumpOn = true;
-                return true;
-            }
-        }
-    }
-    entities[0].collidedBottom = false;
-    return false;
-}
-bool playerCollideTop(){ //handle top collision with block
-    int map_X = 0;
-    int map_Y = 0;
-    map_X = (entities[0].position.x / tileSize);
-    map_Y = ((entities[0].position.y + (entities[0].height / 2)) / -tileSize);
-    if(map_X < map.mapWidth && map_Y < map.mapHeight){
-        for(int palpableID: palpables){
-            if(map.mapData[map_Y][map_X] == palpableID){
-                entities[0].position.y -= fabs(((-tileSize * map_Y) - tileSize) - (entities[0].position.y + entities[0].height/2))+0.001;
                 return true;
             }
         }

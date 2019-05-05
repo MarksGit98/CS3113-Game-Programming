@@ -22,8 +22,8 @@
 		6DEF23C41B96CC2600BCE792 /* vertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 6DEF23C01B96CC2600BCE792 /* vertex.glsl */; };
 		A16A388822718C49004A37E7 /* SheetSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A16A388622718C49004A37E7 /* SheetSprite.cpp */; };
 		A16A388B22718C8E004A37E7 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A16A388922718C8E004A37E7 /* Entity.cpp */; };
-		A16A388D22718CBA004A37E7 /* ships.png in Resources */ = {isa = PBXBuildFile; fileRef = A16A388C22718CBA004A37E7 /* ships.png */; };
 		A16A389122718D1A004A37E7 /* font.png in Resources */ = {isa = PBXBuildFile; fileRef = A16A389022718D1A004A37E7 /* font.png */; };
+		A17BC2C3227F5B380095653F /* sheet.png in Resources */ = {isa = PBXBuildFile; fileRef = A17BC2C2227F5B380095653F /* sheet.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,8 +50,8 @@
 		A16A388722718C49004A37E7 /* SheetSprite.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SheetSprite.hpp; sourceTree = "<group>"; };
 		A16A388922718C8E004A37E7 /* Entity.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
 		A16A388A22718C8E004A37E7 /* Entity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Entity.hpp; sourceTree = "<group>"; };
-		A16A388C22718CBA004A37E7 /* ships.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ships.png; path = "../../HW3 - Space Invaders/NYUCodebase/ships.png"; sourceTree = "<group>"; };
 		A16A389022718D1A004A37E7 /* font.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = font.png; path = "../../HW3 - Space Invaders/NYUCodebase/font.png"; sourceTree = "<group>"; };
+		A17BC2C2227F5B380095653F /* sheet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sheet.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,7 +131,7 @@
 		6D5A86E119AE5CAA0066C1FD /* Code */ = {
 			isa = PBXGroup;
 			children = (
-				A16A388C22718CBA004A37E7 /* ships.png */,
+				A17BC2C2227F5B380095653F /* sheet.png */,
 				A16A389022718D1A004A37E7 /* font.png */,
 				6DEF23BB1B96CC2600BCE792 /* fragment.glsl */,
 				6DE9D2F01BA6AB8C002D599C /* fragment_textured.glsl */,
@@ -202,9 +202,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D5A86B819AE5C710066C1FD /* InfoPlist.strings in Resources */,
+				A17BC2C3227F5B380095653F /* sheet.png in Resources */,
 				6DEF23C11B96CC2600BCE792 /* fragment.glsl in Resources */,
 				6DE9D2F11BA6AB8C002D599C /* fragment_textured.glsl in Resources */,
-				A16A388D22718CBA004A37E7 /* ships.png in Resources */,
 				6D5A86C619AE5C710066C1FD /* Images.xcassets in Resources */,
 				6D5A86BE19AE5C710066C1FD /* Credits.rtf in Resources */,
 				A16A389122718D1A004A37E7 /* font.png in Resources */,

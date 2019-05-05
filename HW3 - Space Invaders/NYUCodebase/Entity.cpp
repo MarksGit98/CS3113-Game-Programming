@@ -20,7 +20,7 @@ void Entity::Draw(ShaderProgram &p, float elapsed){
         sprite.Draw(p, x, y);
     }
 }
-Entity::Entity(float x, float y, float x_velocity, float y_velocity, float width, float height , float r=1, float g=1, float b=1, float u=-5, float v=-5, int textureID=0, float size=-5): x(x), y(y), x_velocity(x_velocity), y_velocity(y_velocity), width(width), height(height), r(r), g(g), b(b), sprite(SheetSprite(textureID, u, v, width, height, size)){}
+Entity::Entity(float x, float y, float x_velocity, float y_velocity, float width, float height , float r=1, float g=1, float b=1, float u=-4, float v=-4, int textureID=0, float size=-4): x(x), y(y), x_velocity(x_velocity), y_velocity(y_velocity), width(width), height(height), r(r), g(g), b(b), sprite(SheetSprite(textureID, u, v, width, height, size)){}
 void Entity::update(float elapsed){
     x+=x_velocity *elapsed;
     y+=y_velocity *elapsed;

@@ -143,7 +143,7 @@ public:
         program.SetModelMatrix(modelMatrix);
     
         //Load Sprite and Font textures
-        spriteSheetTexture = LoadTexture("ships.png");
+        spriteSheetTexture = LoadTexture("sheet.png");
         fontTexture = LoadTexture("font.png");
         
     }
