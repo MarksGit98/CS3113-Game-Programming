@@ -25,7 +25,10 @@ glm::mat4 viewMatrix = glm::mat4(1.0f);
 float lastFrameTicks = 0.0f;
 float elapsed;
 GLuint spriteSheetTexture;
-int num_of_ships = 24; //24 total ships
+int col_num = 7;
+int row_num = 3;
+int num_of_ships = (col_num*row_num); //total # of ships = # of cols by row
+int bullet_num = 20;
 ShaderProgram program;
 ShaderProgram program2;
 
@@ -158,7 +161,7 @@ public:
                     bullets[bulletInd].x = entities[0].x;
                     bullets[bulletInd].y = entities[0].y;
                     bulletInd++;
-                    if(bulletInd > 20){
+                    if(bulletInd > bullet_num){
                         bulletInd = 0;
                     }
                     bulletTimer = 0;
@@ -279,9 +282,9 @@ int main(int argc, char *argv[]){
     game.Setup();
     
     //Create instances of the game sprites
-    SheetSprite playerShip = SheetSprite(spriteSheetTexture, 113.0f/1024.0f, 865.0f/1024.0f, 113.0f/1024.0f, 75.0f/1024.0f, 0.20f);
-    SheetSprite ship = SheetSprite(spriteSheetTexture, 424.0f/1024.0f, 730.0f/1024.0f, 93.0f/1024.0f, 85.0f/1024.0f, 0.20f);
-    SheetSprite bullet = SheetSprite(spriteSheetTexture, 850.0f/1024.0f, 360.0f/1024.0f, 10.0f/1024.0f, 60.0f/1024.0f, 0.25f);
+    SheetSprite playerShip = SheetSprite(spriteSheetTexture, 113.0f/1024.0f, 865.0f/1024.0f, 113.0f/1024.0f, 75.0f/1024.0f, 0.20f); //player's ship
+    SheetSprite ship = SheetSprite(spriteSheetTexture, 424.0f/1024.0f, 730.0f/1024.0f, 93.0f/1024.0f, 85.0f/1024.0f, 0.20f); //enemy's ship
+    SheetSprite bullet = SheetSprite(spriteSheetTexture, 850.0f/1024.0f, 360.0f/1024.0f, 10.0f/1024.0f, 60.0f/1024.0f, 0.25f); //bullet
     
     //Vector of playerShips
     Entity newPlayerShip(0.0,-0.825,-0.05,0.0,playerShip.width,playerShip.height,0,0,0,playerShip.u,playerShip.v,playerShip.textureID, playerShip.size);
@@ -289,16 +292,16 @@ int main(int argc, char *argv[]){
   
     float x = -1.25;
     float y = 0.15;
-    for(int i = 0; i <3; i++){ //3 ships per column
+    for(int i = 0; i < row_num; i++){ //Row of ships
         x=-1.25;
-        for(int j = 0; j < 8; j++){ //8 ships per row
+        for(int j = 0; j < col_num; j++){ //Column of ships
             Entity newEnemyShip(x,y,0.5,0,ship.width,ship.height,0,0,0,ship.u,ship.v,ship.textureID, ship.size);
             ships.push_back(newEnemyShip);
             x+=0.325;
         }
         y+=0.20;
     }
-    for(int i = 0; i <20; i++){
+    for(int i = 0; i < bullet_num; i++){
         Entity newBullet(-100,-100,0,5,bullet.width,bullet.height,0,0,0,bullet.u,bullet.v,bullet.textureID, bullet.size);
         bullets.push_back(newBullet);
     }

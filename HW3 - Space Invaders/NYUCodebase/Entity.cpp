@@ -5,7 +5,6 @@
 
 void Entity::Draw(ShaderProgram &p, float elapsed){
     if(sprite.u == -4){
-        std::cout << "Untextered";
         float vertices[] = {x,y,x+width,y,x+width,y+height, x,y,x+width,y+height,x,y+height};
         p.SetColor(r, g, b, 1);
         glm::mat4 modelMatrix = glm::mat4(1.0f);
@@ -22,8 +21,8 @@ void Entity::Draw(ShaderProgram &p, float elapsed){
 }
 Entity::Entity(float x, float y, float x_velocity, float y_velocity, float width, float height , float r=1, float g=1, float b=1, float u=-4, float v=-4, int textureID=0, float size=-4): x(x), y(y), x_velocity(x_velocity), y_velocity(y_velocity), width(width), height(height), r(r), g(g), b(b), sprite(SheetSprite(textureID, u, v, width, height, size)){}
 void Entity::update(float elapsed){
-    x+=x_velocity *elapsed;
-    y+=y_velocity *elapsed;
+    x+=x_velocity * elapsed;
+    y+=y_velocity * elapsed;
 }
 //detects collisions between entities
 bool Entity::collision(Entity &e){

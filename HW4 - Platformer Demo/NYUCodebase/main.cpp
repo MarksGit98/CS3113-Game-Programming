@@ -29,6 +29,9 @@ ShaderProgram program2;
 float elapsed;
 GLuint spriteSheetTexture;
 int score = 0;
+int victory = 1; //Score needed to win
+bool win = false; //when win condition is reached
+
 
 ShaderProgram program;
 vector<Entity> entities;
@@ -38,6 +41,7 @@ GameMode mode = STATE_MAIN_MENU;
 vector<Entity> enemies;
 vector<float> vertexData;
 vector<float> texCoordData;
+int palpableBlockIds[3] = {33,34,35}; //IDs of collidable blocks
 int sprite_count_x = 16;
 int sprite_count_y = 8;
 float tileSize = 0.15;
@@ -67,14 +71,14 @@ GLuint LoadTexture(const char *filePath) {
     return retTexture;
 }
 void DrawText(ShaderProgram &program, int fontTexture, string text, float x, float y, float size, float spacing) {
-    float texture_size = 1.0 / 16.0f;
+    float text_size = 1.0 / 16.0f;
     vector<float> vertexData;
     vector<float> texCoordData;
     glm::mat4 textModelMatrix = glm::mat4(1.0f);
     textModelMatrix = glm::translate(textModelMatrix, glm::vec3(x, y, 1.0f));
     for (size_t i = 0; i < text.size(); i++) {
-        float texture_x = (float)(((int)text[i]) % 16) / 16.0f;
-        float texture_y = (float)(((int)text[i]) / 16) / 16.0f;
+        float text_x = ((text[i]) % 16) / 16.0f;
+        float text_y = ((text[i]) / 16) / 16.0f;
         vertexData.insert(vertexData.end(), {
             ((size + spacing) * i) + (-0.5f * size), 0.5f * size,
             ((size + spacing) * i) + (-0.5f * size), -0.5f * size,
@@ -84,15 +88,14 @@ void DrawText(ShaderProgram &program, int fontTexture, string text, float x, flo
             ((size + spacing) * i) + (-0.5f * size), -0.5f * size,
         });
         texCoordData.insert(texCoordData.end(), {
-            texture_x, texture_y,
-            texture_x, texture_y + texture_size,
-            texture_x + texture_size, texture_y,
-            texture_x + texture_size, texture_y + texture_size,
-            texture_x + texture_size, texture_y,
-            texture_x, texture_y + texture_size,
+            text_x, text_y,
+            text_x, text_y + text_size,
+            text_x + text_size, text_y,
+            text_x + text_size, text_y + text_size,
+            text_x + text_size, text_y,
+            text_x, text_y + text_size,
         });
     }
-    
     glUseProgram(program.programID);
     program.SetModelMatrix(textModelMatrix);
     glEnable(GL_BLEND);
@@ -104,7 +107,6 @@ void DrawText(ShaderProgram &program, int fontTexture, string text, float x, flo
     glEnableVertexAttribArray(program.texCoordAttribute);
     glBindTexture(GL_TEXTURE_2D, fontTexture);
     glDrawArrays(GL_TRIANGLES, 0, text.size() * 6);
-    
     glDisableVertexAttribArray(program.positionAttribute);
     glDisableVertexAttribArray(program.texCoordAttribute);
 }
@@ -252,8 +254,8 @@ public:
         for(int y=0; y < map.mapHeight; y++) {
             for(int x=0; x < map.mapWidth; x++) {
                 if(map.mapData[y][x] != 0 && map.mapData[y][x] != 12){
-                    float u = (float)(((int)map.mapData[y][x]) % sprite_count_x) / (float) sprite_count_x;
-                    float v = (float)(((int)map.mapData[y][x]) / sprite_count_x) / (float) sprite_count_y;
+                    float u = (float)((map.mapData[y][x]) % sprite_count_x) / (float)(sprite_count_x);
+                    float v = (float)((map.mapData[y][x]) / sprite_count_x) / (float)(sprite_count_y);
                     float spriteWidth = 1.0f/(float)sprite_count_x;
                     float spriteHeight = 1.0f/(float)sprite_count_y;
                     vertexData.insert(vertexData.end(), {
@@ -275,7 +277,10 @@ public:
                 }
             }
         }
-        palpables.push_back(17);
+        //make certain floor tiles collidable
+        for (int ID: palpableBlockIds){
+            palpables.push_back(ID);
+        }
     }
     void Events(){
         while (SDL_PollEvent(&event)) {
@@ -294,7 +299,7 @@ public:
         glClear(GL_COLOR_BUFFER_BIT);
         modelMatrix = glm::mat4(1.0f);
         const Uint8 *keys = SDL_GetKeyboardState(NULL);
-        
+
         //Handle player movement
         if(keys[SDL_SCANCODE_LEFT]) {
             entities[0].velocity.x = -0.25;
@@ -312,13 +317,20 @@ public:
         if(playerCollideLeft()||playerCollideRight()){
             entities[0].velocity.x = 0;
         }
-        for(Entity& enemy: enemies){
-            if(entities[0].collision(enemy)){
-                score++;
-                enemies.pop_back();
-                delete &enemy;
-                glClearColor(1.0f, 1.0f, 0.1f, 1.0f);
+        if (enemies.empty()==true){
+            cout<<"TESTING"<<endl;
+        }
+        if(enemies.empty() == false){ //Check if all enemies were already killed
+            for(Entity& enemy: enemies){ //Collision with enemy
+                if(entities[0].collision(enemy)){
+                    enemies.pop_back();
+                    score++;
+                    //glClearColor(1.0f, 1.0f, 0.1f, 1.0f); //Change background upon killing enemy
+                }
             }
+        }
+        if(score == victory){ //Condition for when the player wins
+            win = true;
         }
         entities[0].update(elapsedUpdate);
         viewMatrix = glm::mat4(1.0f);
@@ -326,16 +338,22 @@ public:
         program.SetViewMatrix(viewMatrix);
     }
     void Render(){
+        if (!win){
         drawMap();
         
         for(Entity& e: entities){
             e.Draw(program, elapsed);
         }
-        for(Entity& enemy: enemies){
-            enemy.Draw(program, elapsed);
+        if (enemies.empty() == false){
+            for(Entity& enemy: enemies){
+                enemy.Draw(program, elapsed);
+                }
+            }
+        }
+        else {
+            DrawText(program, fontTexture, "You Win!", 0.0, -0.90, 0.40, 0.01); //Display YOU WIN to player
         }
     }
-    
     void Clean(){}
 };
 
