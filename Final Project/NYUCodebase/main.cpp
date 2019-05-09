@@ -31,7 +31,7 @@ GLuint spriteSheetTexture;
 int score = 0;
 int victory = 1; //Score needed to win
 bool win = false; //when win condition is reached
-
+bool key = false;
 
 ShaderProgram program;
 vector<Entity> entities;
@@ -53,6 +53,7 @@ float gravity = 0.0075f;
 float accumulator = 0.0f;
 bool JumpOn = false;
 
+int currentGameLevel = 3;
 SDL_Window* displayWindow;
 
 GLuint LoadTexture(const char *filePath) {
@@ -206,7 +207,15 @@ public:
         //DrawText(program, fontTexture, "Score: "+to_string(score), -1.70,0.95,0.05,0.01);
     }
     void Update() {
+        if(currentGameLevel == 1){
         glClearColor(0.5f, 0.7f, 1.0f, 1.0f);
+        }
+        else if(currentGameLevel == 2){
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        }
+        else if(currentGameLevel == 3){
+            glClearColor(0.72f, 0.61f, 1.0f, 1.0f);
+        }
     }
     void Events(){
         while (SDL_PollEvent(&event)) {
@@ -228,7 +237,7 @@ class Game{
 public:
     void Setup(){
         SDL_Init(SDL_INIT_VIDEO);
-        displayWindow = SDL_CreateWindow("Platformer Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
+        displayWindow = SDL_CreateWindow("Final Project", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
         SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
         SDL_GL_MakeCurrent(displayWindow, context);
         glViewport(0, 0, 1280, 720);
@@ -249,9 +258,17 @@ public:
         fontTexture = LoadTexture("font.png");
 
         //Load map
-        map.Load("Level1.txt");
+        if (currentGameLevel == 1){
+            map.Load("Level1.txt");
+        }
+        else if (currentGameLevel == 2){
+            map.Load("Level2.txt");
+        }
+        else if (currentGameLevel == 3){
+            map.Load("Level3.txt");
+        }
+       
         glBindTexture(GL_TEXTURE_2D, spriteSheetTexture);
-        
         for(int y=0; y < map.mapHeight; y++) {
             for(int x=0; x < map.mapWidth; x++) {
                 if(map.mapData[y][x] != 0 && map.mapData[y][x] != 12){
@@ -326,7 +343,6 @@ public:
                 if(entities[0].collision(enemy)){
                     enemies.pop_back();
                     score++;
-                    //glClearColor(1.0f, 1.0f, 0.1f, 1.0f); //Change background upon killing enemy
                 }
             }
         }
