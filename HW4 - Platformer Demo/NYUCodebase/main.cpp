@@ -41,13 +41,12 @@ GameMode mode = STATE_MAIN_MENU;
 vector<Entity> enemies;
 vector<float> vertexData;
 vector<float> texCoordData;
-int palpableBlockIds[3] = {33,34,35}; //IDs of collidable blocks
+vector<int> palpables = {33,34,35}; //IDs of collidable blocks
 int sprite_count_x = 16;
 int sprite_count_y = 8;
 float tileSize = 0.15;
 float scale = 0.1;
 FlareMap map;
-vector<int> palpables;
 float gravity = 0.01f;
 float accumulator = 0.0f;
 bool JumpOn = false;
@@ -278,9 +277,6 @@ public:
             }
         }
         //make certain floor tiles collidable
-        for (int ID: palpableBlockIds){
-            palpables.push_back(ID);
-        }
     }
     void Events(){
         while (SDL_PollEvent(&event)) {

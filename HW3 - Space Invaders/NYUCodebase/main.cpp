@@ -42,7 +42,6 @@ int score = 0;
 float bulletTimer = 0;
 enum GameMode {STATE_MAIN_MENU, STATE_GAME_LEVEL};
 GameMode mode = STATE_MAIN_MENU;
-
 SDL_Window* displayWindow;
 
 GLuint LoadTexture(const char *filePath) {
