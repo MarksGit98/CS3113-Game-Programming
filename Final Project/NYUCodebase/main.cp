@@ -35,7 +35,7 @@ int keyID = 86;
 
 
 ShaderProgram program;
-vector<Entity> players;
+vector<Entity> entities;
 GLuint fontTexture;
 enum GameMode {STATE_MAIN_MENU, STATE_GAME_LEVEL};
 GameMode mode = STATE_MAIN_MENU;
@@ -46,14 +46,14 @@ vector<Entity> levelkeys;
 
 vector<float> vertexData;
 vector<float> texCoordData;
-vector<int> palpables = {33,34,35,96,97,32,17,100}; //IDs of collidable blocks
-vector<int> collectables = {keyID};
+vector<int> palpableBlockIds = {33,34,35,96,97,32,17,100}; //IDs of collidable blocks
 int spikeID = 100;
 int sprite_count_x = 16;
 int sprite_count_y = 8;
 float tileSize = 0.15;
 float scale = 0.1;
 FlareMap map;
+vector<int> palpables;
 float gravity = 0.0075f;
 float accumulator = 0.0f;
 bool JumpOn = false;
@@ -77,6 +77,8 @@ GLuint LoadTexture(const char *filePath) {
     stbi_image_free(image);
     return retTexture;
 }
+
+
 
 void DrawText(ShaderProgram &program, int fontTexture, string text, float x, float y, float size, float spacing) {
     float text_size = 1.0 / 16.0f;
@@ -119,6 +121,7 @@ void DrawText(ShaderProgram &program, int fontTexture, string text, float x, flo
     glDisableVertexAttribArray(program.texCoordAttribute);
 }
 
+
 void drawMap(){
     glUseProgram(program.programID);
     glm::mat4 mapModelMatrix = glm::mat4(1.0);
@@ -140,6 +143,8 @@ void gameOver(){
     cout << "Game Over" << endl;
 }
 
+
+
 //Collision Detection
 void worldToTileCoordinates(float worldX, float worldY, int *map_X, int *map_Y) {
     *map_X = (int)(worldX / tileSize);
@@ -149,64 +154,68 @@ void worldToTileCoordinates(float worldX, float worldY, int *map_X, int *map_Y) 
 bool playerCollideTop(){ //handle top collision with block
     int map_X = 0;
     int map_Y = 0;
-    map_X = (players[0].position.x / tileSize);
-    map_Y = ((players[0].position.y + (players[0].height / 2)) / -tileSize);
+    map_X = (entities[0].position.x / tileSize);
+    map_Y = ((entities[0].position.y + (entities[0].height / 2)) / -tileSize);
     
     if(map_X < map.mapWidth && map_Y < map.mapHeight){
-        for(int ID: palpables){
-            if(map.mapData[map_Y][map_X] == ID){
-                players[0].position.y -= fabs(((-tileSize * map_Y) - tileSize) - (players[0].position.y + players[0].height/2))+0.001;
+        for(int tileID: palpables){
+            if(map.mapData[map_Y][map_X] == tileID){
+                entities[0].position.y -= fabs(((-tileSize * map_Y) - tileSize) - (entities[0].position.y + entities[0].height/2))+0.001;
                 return true;
             }
             if (map.mapData[map_Y][map_X] == spikeID){ //Spikes kill you if you land on it
                 gameOver();
             }
-        }
-        for(int ID: collectables){
-            if(map.mapData[map_Y][map_X] == ID){
-                cout<<"KEY"<<endl;
+            
+            if (map.mapData[map_Y][map_X] == keyID){
+                map.mapData[map_Y][map_X] = 0;
+                cout << "KEY" << endl;
+                keyCount ++;
             }
         }
     }
-    players[0].collidedBottom = false;
+        
+        
+    entities[0].collidedBottom = false;
     return false;
 }
 
 bool playerCollideBottom(){ //handle bottom collision with block
     int map_X = 0;
     int map_Y = 0;
-    map_X = (players[0].position.x / tileSize);
-    map_Y = ((players[0].position.y - (tileSize/ 2)) / -tileSize);
+    map_X = (entities[0].position.x / tileSize);
+    map_Y = ((entities[0].position.y - (tileSize/ 2)) / -tileSize);
     
     if(map_X < map.mapWidth && map_Y < map.mapHeight){
         for(int tileID: palpables){
             if(map.mapData[map_Y][map_X] == tileID){
-                players[0].collidedBottom = true;
-                players[0].position.y += fabs((-tileSize * map_Y) - (players[0].position.y - tileSize/2))+0.001;
+                entities[0].collidedBottom = true;
+                entities[0].position.y += fabs((-tileSize * map_Y) - (entities[0].position.y - tileSize/2))+0.001;
                 JumpOn = true;
                 return true;
             }
         }
     }
-    players[0].collidedBottom = false;
+    entities[0].collidedBottom = false;
     return false;
 }
+
 
 bool playerCollideLeft(){ //handle left collision with block
     int map_X =0;
     int map_Y = 0;
-    map_X = ((players[0].position.x - (players[0].width / 2))/ tileSize);
-    map_Y = (players[0].position.y / -tileSize);
+    map_X = ((entities[0].position.x - (entities[0].width / 2))/ tileSize);
+    map_Y = (entities[0].position.y / -tileSize);
     
     if(map_X < map.mapWidth && map_Y < map.mapHeight){
         for(int tileID: palpables){
             if(map.mapData[map_Y][map_X] == tileID){
-                players[0].position.x += fabs(((tileSize * map_X) + tileSize) - (players[0].position.x - tileSize/2))+0.001;
+                entities[0].position.x += fabs(((tileSize * map_X) + tileSize) - (entities[0].position.x - tileSize/2))+0.001;
                 return true;
             }
         }
     }
-    players[0].collidedBottom = false;
+    entities[0].collidedBottom = false;
     return false;
 }
 
@@ -214,19 +223,25 @@ bool playerCollideLeft(){ //handle left collision with block
 bool playerCollideRight(){ //handle right collision with block
     int map_X = 0;
     int map_Y = 0;
-    map_X = ((players[0].position.x + (players[0].width / 2))/ tileSize);
-    map_Y = (players[0].position.y / -tileSize);
-    
+    map_X = ((entities[0].position.x + (entities[0].width / 2))/ tileSize);
+    map_Y = (entities[0].position.y / -tileSize);
+
     if(map_X < map.mapWidth && map_Y < map.mapHeight){
         for(int tileID: palpables){
             if(map.mapData[map_Y][map_X] == tileID){
-                players[0].position.x -= fabs(((tileSize * map_X) + tileSize) - (players[0].position.x + tileSize/2))+0.001;
+                entities[0].position.x -= fabs(((tileSize * map_X) + tileSize) - (entities[0].position.x + tileSize/2))+0.001;
                 return true;
             }
         }
     }
     return false;
 }
+
+
+
+
+
+
 
 class mainMenu {
 public:
@@ -236,7 +251,7 @@ public:
     
     void Update() {
         if(currentGameLevel == 1){
-            glClearColor(0.5f, 0.7f, 1.0f, 1.0f);
+        glClearColor(0.5f, 0.7f, 1.0f, 1.0f);
         }
         else if(currentGameLevel == 2){
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -262,6 +277,10 @@ public:
     void Clean(){}
 };
 
+
+
+
+
 class Game{
 public:
     void Setup(){
@@ -285,7 +304,7 @@ public:
         //Load textures
         spriteSheetTexture = LoadTexture("sheet.png");
         fontTexture = LoadTexture("font.png");
-        
+
         //Load map
         if (currentGameLevel == 1){
             map.Load("Level1.txt");
@@ -296,7 +315,7 @@ public:
         else if (currentGameLevel == 3){
             map.Load("Level3.txt");
         }
-        
+       
         glBindTexture(GL_TEXTURE_2D, spriteSheetTexture);
         for(int y=0; y < map.mapHeight; y++) {
             for(int x=0; x < map.mapWidth; x++) {
@@ -324,6 +343,11 @@ public:
                 }
             }
         }
+        
+        //make certain floor tiles collidable
+        for (int ID: palpableBlockIds){
+            palpables.push_back(ID);
+        }
     }
     void Events(){
         while (SDL_PollEvent(&event)) {
@@ -332,7 +356,7 @@ public:
             }
             else if (event.type == SDL_KEYDOWN){
                 if(event.key.keysym.scancode == SDL_SCANCODE_SPACE && JumpOn) {
-                    players[0].velocity.y=1.0;
+                    entities[0].velocity.y=1.0;
                     JumpOn = false;
                 }
             }
@@ -343,24 +367,27 @@ public:
         glClear(GL_COLOR_BUFFER_BIT);
         modelMatrix = glm::mat4(1.0f);
         const Uint8 *keys = SDL_GetKeyboardState(NULL);
-        
+
         //Handle player movement
         if(keys[SDL_SCANCODE_LEFT]) {
-            players[0].velocity.x = -0.25;
+            entities[0].velocity.x = -0.25;
         } else if(keys[SDL_SCANCODE_RIGHT]) {
-            players[0].velocity.x = 0.25;
+            entities[0].velocity.x = 0.25;
         }
         else{
-            players[0].velocity.x = 0;
+            entities[0].velocity.x = 0;
         }
-        players[0].velocity.y -= gravity;
+        entities[0].velocity.y -= gravity;
+        
+        
+        
         
         if(playerCollideBottom()||playerCollideTop()){
-            players[0].velocity.y = 0;
+            entities[0].velocity.y = 0;
         }
         
         if(playerCollideLeft()||playerCollideRight()){
-            players[0].velocity.x = 0;
+            entities[0].velocity.x = 0;
         }
         
         if (enemies.empty()==true){
@@ -369,39 +396,34 @@ public:
         
         if(enemies.empty() == false){ //Check if all enemies were already killed
             for(Entity& enemy: enemies){ //Collision with enemy
-                if(players[0].collision(enemy)){
+                if(entities[0].collision(enemy)){
                     enemies.pop_back();
                 }
             }
         }
         
         if (levelkeys.empty() == false){
-            if(players[0].collision(levelkeys[0])){
+            if(entities[0].collision(levelkeys[0])){
                 levelkeys.pop_back();
             }
         }
-        
-        players[0].update(elapsedUpdate);
+
+        entities[0].update(elapsedUpdate);
         viewMatrix = glm::mat4(1.0f);
-        viewMatrix = glm::translate(viewMatrix, glm::vec3(-players[0].position.x,-players[0].position.y,0.0f));
+        viewMatrix = glm::translate(viewMatrix, glm::vec3(-entities[0].position.x,-entities[0].position.y,0.0f));
         program.SetViewMatrix(viewMatrix);
     }
     
     void Render(){
         if (!win){
-            drawMap();
-            
-            for(Entity& e: players){
-                e.Draw(program, elapsed);
-            }
-            if(levelkeys.empty() == false){
-                for(Entity& key: levelkeys){
-                    key.Draw(program, elapsed);
-                }
-            }
-            if (enemies.empty() == false){
-                for(Entity& enemy: enemies){
-                    enemy.Draw(program, elapsed);
+        drawMap();
+        
+        for(Entity& e: entities){
+            e.Draw(program, elapsed);
+        }
+        if (enemies.empty() == false){
+            for(Entity& enemy: enemies){
+                enemy.Draw(program, elapsed);
                 }
             }
         }
@@ -411,6 +433,9 @@ public:
     }
     void Clean(){}
 };
+
+
+
 
 mainMenu menu;
 Game game;
@@ -462,41 +487,71 @@ void Clean(){
     }
 }
 
+
+void renderEntities(){
+    for(FlareMapEntity entity : map.entities){
+        if(entity.type == "enemy"){
+            float u = (float)((102) % sprite_count_x) / (float) sprite_count_x;
+            float v = (float)((102) / sprite_count_x) / (float) sprite_count_y;
+            float spriteWidth = 1.0f/(float)sprite_count_x;
+            float spriteHeight = 1.0f/(float)sprite_count_y;
+            SheetSprite enemy = SheetSprite(spriteSheetTexture,u, v,spriteWidth, spriteHeight, tileSize);
+            enemies.push_back(Enemy(ent.x*tileSize,ent.y*-tileSize, .07,0,enemy.width,enemy.height, u, v, enemy.textureID, enemy.size, &map, &solids, &entities[0]));
+        }
+        else if(entity.type == "power"){
+            float u = (float)((38) % sprite_count_x) / (float) sprite_count_x;
+            float v = (float)((38) / sprite_count_x) / (float) sprite_count_y;
+            float spriteWidth = 1.0f/(float)sprite_count_x;
+            float spriteHeight = 1.0f/(float)sprite_count_y;
+            
+            SheetSprite powerSprite = SheetSprite(spriteSheetTexture,u, v,spriteWidth, spriteHeight, tileSize);
+            power.push_back(Entity(ent.x*tileSize,ent.y*-tileSize,0,0,powerSprite.width,powerSprite.height,0,0,0,powerSprite.u,powerSprite.v,powerSprite.textureID, powerSprite.size));
+        }
+        else if(ent.type == "health"){
+            float u = (float)((27) % sprite_count_x) / (float) sprite_count_x;
+            float v = (float)((27) / sprite_count_x) / (float) sprite_count_y;
+            float spriteWidth = 1.0f/(float)sprite_count_x;
+            float spriteHeight = 1.0f/(float)sprite_count_y;
+            SheetSprite healthSprite = SheetSprite(spriteSheetTexture,u, v,spriteWidth, spriteHeight, tileSize);
+            healthUp.push_back(Entity(ent.x*tileSize,ent.y*-tileSize,0,0,healthSprite.width,healthSprite.height,0,0,0,healthSprite.u,healthSprite.v,healthSprite.textureID, healthSprite.size));
+        }
+    }
+}
+
+
 int main(int argc, char *argv[]){
     Setup();
+    float u = (float)((98) % sprite_count_x) / (float) sprite_count_x;
+    float v = (float)((98) / sprite_count_x) / (float) sprite_count_y;
     
     float spriteWidth = 1.0f/(float)sprite_count_x;
     float spriteHeight = 1.0f/(float)sprite_count_y;
     
-    //Create player sprite
-    float u = (float)((98) % sprite_count_x) / (float) sprite_count_x;
-    float v = (float)((98) / sprite_count_x) / (float) sprite_count_y;
-    
     SheetSprite mySprite = SheetSprite(spriteSheetTexture, u, v,spriteWidth , spriteHeight, tileSize);
     
-    //Create enemy sprite
     u = (float)((80) % sprite_count_x) / (float) sprite_count_x;
     v = (float)((80) / sprite_count_x) / (float) sprite_count_y;
     
     SheetSprite enemy = SheetSprite(spriteSheetTexture, u, v,spriteWidth , spriteHeight, tileSize);
     
-    //Create key sprite
+    
     u = (float)((86) % sprite_count_x) / (float) sprite_count_x;
     v = (float)((86) / sprite_count_x) / (float) sprite_count_y;
     
     SheetSprite key = SheetSprite(spriteSheetTexture,u, v, spriteWidth , spriteHeight, tileSize);
     
-    //Instantiate new entites
+    
+    //Instantiate new enemy and player
     Entity newPlayer(0, 0,-1.0,0,mySprite.width,mySprite.height,0,0,0,mySprite.u,mySprite.v,mySprite.textureID, mySprite.size);
     
     Entity newEnemy(1.5,-1.0,-0.1,0.0,enemy.width,enemy.height,0,0,0,enemy.u,enemy.v,enemy.textureID, enemy.size);
-    
+
     Entity newKey(1.5, -1.0, 0.0, 0.0, tileSize, tileSize, 0, 0, 0, key.u, key.v, key.textureID, key.size);
     
     
     
-    //Push entities into their respective vectors
-    players.push_back(newPlayer);
+    //Push enemy and player into their respective vectors
+    entities.push_back(newPlayer);
     enemies.push_back(newEnemy);
     levelkeys.push_back(newKey);
     
@@ -529,4 +584,3 @@ int main(int argc, char *argv[]){
     SDL_Quit();
     return 0;
 }
-
