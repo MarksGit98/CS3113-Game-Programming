@@ -57,7 +57,7 @@ FlareMap map;
 float gravity = 0.0075f;
 float accumulator = 0.0f;
 bool JumpOn = false;
-
+int health = 3;
 int currentGameLevel = 1;
 SDL_Window* displayWindow;
 
@@ -158,8 +158,8 @@ bool playerCollideTop(){ //handle top collision with block
                 players[0].position.y -= fabs(((-tileSize * map_Y) - tileSize) - (players[0].position.y + players[0].height/2))+0.001;
                 return true;
             }
-            if (map.mapData[map_Y][map_X] == spikeID){ //Spikes kill you if you land on it
-                gameOver();
+            if (map.mapData[map_Y+1][map_X] == spikeID){ //Spikes kill you if you land on it
+                health-=1;
             }
         }
         for(int ID: collectables){
@@ -210,7 +210,6 @@ bool playerCollideLeft(){ //handle left collision with block
     return false;
 }
 
-
 bool playerCollideRight(){ //handle right collision with block
     int map_X = 0;
     int map_Y = 0;
@@ -227,7 +226,76 @@ bool playerCollideRight(){ //handle right collision with block
     }
     return false;
 }
+bool enemyCollideTop(Entity& enemy){ //handle top collision with block
+    int map_X = 0;
+    int map_Y = 0;
+    map_X = (enemy.position.x / tileSize);
+    map_Y = ((enemy.position.y + (players[0].height / 2)) / -tileSize);
+    
+    if(map_X < map.mapWidth && map_Y < map.mapHeight){
+        for(int ID: palpables){
+            if(map.mapData[map_Y][map_X] == ID){
+                enemy.position.y -= fabs(((-tileSize * map_Y) - tileSize) - (enemy.position.y + enemy.height/2))+0.001;
+                return true;
+            }
+        }
+    }
+    enemy.collidedBottom = false;
+    return false;
+}
 
+bool enemyCollideBottom(Entity& enemy){ //handle bottom collision with block
+    int map_X = 0;
+    int map_Y = 0;
+    map_X = (enemy.position.x / tileSize);
+    map_Y = ((enemy.position.y - (tileSize/ 2)) / -tileSize);
+    
+    if(map_X < map.mapWidth && map_Y < map.mapHeight){
+        for(int tileID: palpables){
+            if(map.mapData[map_Y][map_X] == tileID){
+                enemy.collidedBottom = true;
+                enemy.position.y += fabs((-tileSize * map_Y) - (enemy.position.y - tileSize/2))+0.001;
+                return true;
+            }
+        }
+    }
+    enemy.collidedBottom = false;
+    return false;
+}
+bool enemyCollideLeft(Entity &enemy){ //handle left collision with block
+    int map_X =0;
+    int map_Y = 0;
+    map_X = ((enemy.position.x - (enemies[0].width / 2))/ tileSize);
+    map_Y = (enemy.position.y / -tileSize);
+    
+    if(map_X < map.mapWidth && map_Y < map.mapHeight){
+        for(int tileID: palpables){
+            if(map.mapData[map_Y][map_X] == tileID){
+                enemy.position.x += fabs(((tileSize * map_X) + tileSize) - (enemy.position.x - tileSize/2))+0.001;
+                return true;
+            }
+        }
+    }
+    enemy.collidedBottom = false;
+    return false;
+}
+
+bool enemyCollideRight(Entity& enemy){ //handle right collision with block
+    int map_X = 0;
+    int map_Y = 0;
+    map_X = ((enemy.position.x + (enemies[0].width / 2))/ tileSize);
+    map_Y = (enemy.position.y / -tileSize);
+    
+    if(map_X < map.mapWidth && map_Y < map.mapHeight){
+        for(int tileID: palpables){
+            if(map.mapData[map_Y][map_X] == tileID){
+                enemy.position.x -= fabs(((tileSize * map_X) + tileSize) - (enemy.position.x + tileSize/2))+0.001;
+                return true;
+            }
+        }
+    }
+    return false;
+}
 class mainMenu {
 public:
     void Render() {
@@ -340,15 +408,18 @@ public:
     }
     
     void Update(float elapsedUpdate = elapsed){
+        if (health == 0){
+            gameOver();
+        }
         glClear(GL_COLOR_BUFFER_BIT);
         modelMatrix = glm::mat4(1.0f);
         const Uint8 *keys = SDL_GetKeyboardState(NULL);
         
-        //Handle player movement
+        //Handle player and enemy movement
         if(keys[SDL_SCANCODE_LEFT]) {
-            players[0].velocity.x = -0.25;
+            players[0].velocity.x = -0.30;
         } else if(keys[SDL_SCANCODE_RIGHT]) {
-            players[0].velocity.x = 0.25;
+            players[0].velocity.x = 0.30;
         }
         else{
             players[0].velocity.x = 0;
@@ -362,11 +433,16 @@ public:
         if(playerCollideLeft()||playerCollideRight()){
             players[0].velocity.x = 0;
         }
-        
-        if (enemies.empty()==true){
-            cout<<"TESTING"<<endl;
+        for (Entity& enemy: enemies){
+            enemy.velocity.y -= gravity;
+            if(enemyCollideBottom(enemy)||enemyCollideTop(enemy)){
+                enemy.velocity.y = 0;
+            }
+            
+            if(enemyCollideLeft(enemy)||enemyCollideRight(enemy)){
+                enemy.velocity.x = 0;
+            }
         }
-        
         if(enemies.empty() == false){ //Check if all enemies were already killed
             for(Entity& enemy: enemies){ //Collision with enemy
                 if(players[0].collision(enemy)){
@@ -463,6 +539,7 @@ void Clean(){
 }
 
 int main(int argc, char *argv[]){
+
     Setup();
     
     float spriteWidth = 1.0f/(float)sprite_count_x;
