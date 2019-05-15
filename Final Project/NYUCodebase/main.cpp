@@ -156,7 +156,6 @@ void renderEntities(){
     //Create enemy sprites
     for(FlareMapEntity enemy: map.entities){
         if(enemy.type == "Key"){
-            cout<<"key"<<endl;
         //Create key
         float u = (float)((86) % sprite_count_x) / (float) sprite_count_x;
         float v = (float)((86) / sprite_count_x) / (float) sprite_count_y;
