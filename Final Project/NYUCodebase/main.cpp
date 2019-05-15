@@ -64,11 +64,11 @@ float accumulator = 0.0f;
 bool JumpOn = false;
 int defaultHealth = 3;
 int health = defaultHealth;
-int currentGameLevel = 2;
+int currentGameLevel = 1;
 SDL_Window* displayWindow;
 
 float playerAnimationTimer = 0.10;
-float enemyAnimationTimer = 0.10;
+float enemyAnimationTimer = 0.20;
 
 GLuint LoadTexture(const char *filePath) {
     int w,h,comp;
@@ -249,16 +249,17 @@ bool playerCollideLeft(){ //handle left collision with block
                     }
                     health=defaultHealth;
                     hasKey=false;
-                    currentGameLevel+=1;
                     enemies.clear();
                     levelkeys.clear();
                     //players.clear();
                     map.entities.clear();
                     if(currentGameLevel == 1){
                         map.Load("Level2.txt");
+                        currentGameLevel+=1;
                         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                     }
                     else if(currentGameLevel==2){
+                        currentGameLevel+=1;
                         map.Load("Level3.txt");
                         glClearColor(0.72f, 0.61f, 1.0f, 1.0f);
                     }
@@ -319,16 +320,17 @@ bool playerCollideRight(){ //handle right collision with block
                     }
                     health=defaultHealth;
                     hasKey=false;
-                    currentGameLevel+=1;
                     enemies.clear();
                     levelkeys.clear();
-                    //players.clear();
+            
                     map.entities.clear();
                     if(currentGameLevel == 1){
                         map.Load("Level2.txt");
+                        currentGameLevel+=1;
                         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                     }
                     else if (currentGameLevel==2){
+                        currentGameLevel+=1;
                         map.Load("Level3.txt");
                         glClearColor(0.72f, 0.61f, 1.0f, 1.0f);
                     }
@@ -397,6 +399,11 @@ bool enemyCollideBottom(Entity& enemy){ //handle bottom collision with block
                 enemy.position.y += fabs((-tileSize * map_Y) - (enemy.position.y - tileSize/2))+0.001;
                 return true;
             }
+            else{
+                if (currentGameLevel==1){
+                    enemy.position.y-=0.0025;
+                }
+            }
         }
     }
     enemy.collidedBottom = false;
@@ -411,12 +418,8 @@ bool enemyCollideLeft(Entity &enemy){ //handle left collision with block
     if(map_X < map.mapWidth && map_Y < map.mapHeight){
         for(int tileID: palpables){
             if(map.mapData[map_Y][map_X] == tileID){
-                enemy.position.x += fabs(((tileSize * map_X) + tileSize) - (enemy.position.x - tileSize/2))+0.001;
+                enemy.position.x +=0.001;
                 return true;
-            }
-            if(map.mapData[map_Y][map_X-1] == 0){
-                enemy.position.x *=-1;
-                enemy.velocity.x *=-1;
             }
         }
     }
@@ -433,12 +436,8 @@ bool enemyCollideRight(Entity& enemy){ //handle right collision with block
     if(map_X < map.mapWidth && map_Y < map.mapHeight){
         for(int tileID: palpables){
             if(map.mapData[map_Y][map_X] == tileID){
-                enemy.position.x -= fabs(((tileSize * map_X) + tileSize) - (enemy.position.x + tileSize/2))+0.001;
+                enemy.position.x -=0.001;
                 return true;
-            }
-            if(map.mapData[map_Y][map_X+1] == 0){
-                enemy.position.x *=-1;
-                enemy.velocity.x *=-1;
             }
         }
     }
@@ -627,25 +626,21 @@ public:
             players[0].velocity.x = 0;
         }
         for (Entity& enemy: enemies){
-            
-            if(elapsedUpdate<=-0.001){
-                enemy.position.x +=0.001;
-                enemy.velocity.x = 0.5;
+            if(enemyAnimationTimer < 0){
+                EnemyAnimation(enemy);
+                enemyAnimationTimer = 0.3;
             }
-            else{
-                 enemy.position.x -=0.001;
-                 enemy.velocity.x = -0.5;
+            if (enemy.position.x<=0.0){
+                enemy.position.x=1000;
             }
+            enemy.position.x -=0.001;
             enemy.velocity.y -= gravity;
             
             enemyCollideLeft(enemy);
             enemyCollideRight(enemy);
             enemyCollideTop(enemy);
             enemyCollideBottom(enemy);
-            if(enemyAnimationTimer < 0){
-                EnemyAnimation(enemy);
-                enemyAnimationTimer = 0.1;
-            }
+            
         }
         enemyAnimationTimer-=elapsedUpdate;
         
@@ -680,8 +675,8 @@ public:
             else{
                  DrawText(program, fontTexture, "Key: Acquired",players[0].position.x-1.65,players[0].position.y+0.77,0.07,0.00);
             }
-            for(Entity& e: players){
-                e.Draw(program, elapsed);
+            for(Entity& player: players){
+                player.Draw(program, elapsed);
             }
             if(levelkeys.empty() == false){
                 for(Entity& key: levelkeys){

@@ -52,22 +52,22 @@ data=
 [Object Layer 1]
 # Minion
 type=Minion
-location=38,16,1,1
+location=40,15,1,1
 
 [Object Layer 1]
 # Minion
 type=Minion
-location=56,25,1,1
+location=58,25,1,1
 
 [Object Layer 1]
 # Minion
 type=Minion
-location=24,20,1,1
+location=28,20,1,1
 
 [Object Layer 1]
 # Minion
 type=Minion
-location=26,25,1,1
+location=22,25,1,1
 
 [Object Layer 1]
 # Minion
@@ -77,7 +77,7 @@ location=16,25,1,1
 [Object Layer 1]
 # Minion
 type=Minion
-location=4,16,1,1
+location=3,10,1,1
 
 [Object Layer 1]
 # Key
