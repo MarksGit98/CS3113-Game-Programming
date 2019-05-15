@@ -64,7 +64,7 @@ float accumulator = 0.0f;
 bool JumpOn = false;
 int defaultHealth = 3;
 int health = defaultHealth;
-int currentGameLevel = 1;
+int currentGameLevel = 3;
 SDL_Window* displayWindow;
 
 float playerAnimationTimer = 0.10;
@@ -668,7 +668,9 @@ public:
     void Render(){
         if (!win){
             drawMap();
+            //Display Health
             DrawText(program, fontTexture, "Health:"+ to_string(health),players[0].position.x-1.65,players[0].position.y+0.90,0.07,0.00);
+           //Display Key Status
             if (hasKey==false){
              DrawText(program, fontTexture, "Key: Not Found",players[0].position.x-1.65,players[0].position.y+0.77,0.07,0.00);
             }
@@ -690,7 +692,7 @@ public:
             }
         }
         else {
-            DrawText(program, fontTexture, "YOU WIN!", players[0].position.x-0.80,players[0].position.y, 0.20, 0.01); //Display YOU WIN to player
+            DrawText(program, fontTexture, "YOU WIN!!!", players[0].position.x-0.80,players[0].position.y, 0.20, 0.01); //Display YOU WIN to player
             glClearColor(0.0, 0.0, 0.0, 0.0);
         }
     }
