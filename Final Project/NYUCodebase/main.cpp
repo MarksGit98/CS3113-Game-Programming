@@ -70,7 +70,7 @@ float accumulator = 0.0f;
 bool JumpOn = false;
 int defaultHealth = 10;
 int health = defaultHealth;
-int currentGameLevel = 1;
+int currentGameLevel = 3;
 SDL_Window* displayWindow;
 
 float playerAnimationTimer = 0.10;
@@ -250,6 +250,9 @@ bool playerCollideLeft(){ //handle left collision with block
             }
             if (map.mapData[map_Y][map_X+1] == endgateID){ //Allow player to advance to the next level if he has the key
                 if (hasKey==true){
+                    if (currentGameLevel==3){
+                        win=true;
+                    }
                     health=defaultHealth;
                     hasKey=false;
                     currentGameLevel+=1;
@@ -261,7 +264,7 @@ bool playerCollideLeft(){ //handle left collision with block
                         map.Load("Level2.txt");
                         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                     }
-                    else{
+                    else if(currentGameLevel==1){
                         map.Load("Level3.txt");
                         glClearColor(0.72f, 0.61f, 1.0f, 1.0f);
                     }
@@ -317,6 +320,9 @@ bool playerCollideRight(){ //handle right collision with block
             }
             if (map.mapData[map_Y][map_X+1] == endgateID){ //Allow player to advance to the next level if he has the key
                 if (hasKey==true){
+                    if (currentGameLevel==3){
+                        win=true;
+                    }
                     health=defaultHealth;
                     hasKey=false;
                     currentGameLevel+=1;
@@ -328,7 +334,7 @@ bool playerCollideRight(){ //handle right collision with block
                         map.Load("Level2.txt");
                         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                     }
-                    else{
+                    else if (currentGameLevel==1){
                         map.Load("Level3.txt");
                         glClearColor(0.72f, 0.61f, 1.0f, 1.0f);
                     }
@@ -671,7 +677,7 @@ public:
             }
         }
         else {
-            DrawText(program, fontTexture, "YOU WIN!", players[0].position.x-0.82,players[0].position.y, 0.20, 0.01); //Display YOU WIN to player
+            DrawText(program, fontTexture, "YOU WIN!", players[0].position.x-0.80,players[0].position.y, 0.20, 0.01); //Display YOU WIN to player
             glClearColor(0.0, 0.0, 0.0, 0.0);
         }
     }
