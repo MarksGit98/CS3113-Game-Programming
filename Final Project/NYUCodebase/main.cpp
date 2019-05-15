@@ -64,25 +64,31 @@ float accumulator = 0.0f;
 bool JumpOn = false;
 int defaultHealth = 3;
 int health = defaultHealth;
-int currentGameLevel = 3;
+int currentGameLevel = 1;
 SDL_Window* displayWindow;
 
 float playerAnimationTimer = 0.10;
 float enemyAnimationTimer = 0.20;
 
-GLuint LoadTexture(const char *filePath) {
+GLuint LoadTexture(const char *filePath, bool useNearest) {
     int w,h,comp;
     unsigned char* image = stbi_load(filePath, &w, &h, &comp, STBI_rgb_alpha);
     if(image == NULL) {
-        cout << "Unable to load image. Make sure the path is correct\n";
+        std::cout << "Unable to load image. Make sure the path is correct\n";
         assert(false);
     }
     GLuint retTexture;
     glGenTextures(1, &retTexture);
     glBindTexture(GL_TEXTURE_2D, retTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    if (useNearest) {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    }
+    else {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
     stbi_image_free(image);
     return retTexture;
 }
@@ -533,8 +539,8 @@ public:
         program.SetModelMatrix(modelMatrix);
         
         //Load textures
-        spriteSheetTexture = LoadTexture("sheet.png");
-        fontTexture = LoadTexture("font.png");
+        spriteSheetTexture = LoadTexture("sheet.png", true);
+        fontTexture = LoadTexture("font.png", true);
         
         //Load map
         if (currentGameLevel == 1){
