@@ -42,12 +42,12 @@ bool hasKey = false;
 bool hitSpikes = false;
 int keyID = 86;
 int endgateID = 7;
-int invulnerableTime = 2;
+float invulnerableTime = 3.0;
 
 ShaderProgram program;
 vector<Entity> players;
 GLuint fontTexture;
-enum GameMode {STATE_MAIN_MENU, STATE_GAME_LEVEL};
+enum GameMode {STATE_MAIN_MENU, STATE_GAME_LEVEL, STATE_GAME_OVER};
 GameMode mode = STATE_MAIN_MENU;
 vector<Entity> enemies;
 
@@ -68,7 +68,8 @@ FlareMap map;
 float gravity = 0.0075f;
 float accumulator = 0.0f;
 bool JumpOn = false;
-int health = 3;
+int defaultHealth = 10;
+int health = defaultHealth;
 int currentGameLevel = 1;
 SDL_Window* displayWindow;
 
@@ -148,11 +149,37 @@ void drawMap(){
     glDisableVertexAttribArray(program.texCoordAttribute);
 }
 
-void gameOver(){
-    cout << "Game Over" << endl;
+void renderEntities(){
+    float spriteWidth = 1.0f/(float)sprite_count_x;
+    float spriteHeight = 1.0f/(float)sprite_count_y;
+  
+    //Create enemy sprites
+    for(FlareMapEntity enemy: map.entities){
+        if(enemy.type == "Key"){
+            cout<<"key"<<endl;
+        //Create key
+        float u = (float)((86) % sprite_count_x) / (float) sprite_count_x;
+        float v = (float)((86) / sprite_count_x) / (float) sprite_count_y;
+        
+        SheetSprite key = SheetSprite(spriteSheetTexture,u, v, spriteWidth, spriteHeight, tileSize);
+        levelkeys.push_back(Entity(float(enemy.x)*tileSize,float(-enemy.y)*tileSize,1.0,0, key.width, key.height, 0, 0, 0, key.u , key.v, key.textureID, key.size));
+        }
+        if(enemy.type == "Minion"){
+            //Create Minion
+            float u = (float)((80) % sprite_count_x) / (float) sprite_count_x;
+            float v = (float)((80) / sprite_count_x) / (float) sprite_count_y;
+            SheetSprite minion = SheetSprite(spriteSheetTexture, u, v,spriteWidth , spriteHeight, tileSize);
+            enemies.push_back(Entity(float(enemy.x)*tileSize,float(-enemy.y)*tileSize,1.0,0,minion.width,minion.height,0,0,0,minion.u,minion.v,minion.textureID, minion.size));
+        }
+        if(enemy.type == "Ghost"){
+            //Create Ghosts
+            float u = (float)((103) % sprite_count_x) / (float) sprite_count_x;
+            float v = (float)((103) / sprite_count_x) / (float) sprite_count_y;
+            SheetSprite ghost = SheetSprite(spriteSheetTexture, u, v,spriteWidth , spriteHeight, tileSize);
+            enemies.push_back(Entity(float(enemy.x)*tileSize,float(-enemy.y)*tileSize,1.0,0,ghost.width,ghost.height,0,0,0,ghost.u,ghost.v,ghost.textureID, ghost.size));
+        }
+    }
 }
-
-
 //Collision Detection
 void worldToTileCoordinates(float worldX, float worldY, int *map_X, int *map_Y) {
     *map_X = (int)(worldX / tileSize);
@@ -172,13 +199,10 @@ bool playerCollideTop(){ //handle top collision with block
                 return true;
             }
             if (map.mapData[map_Y+1][map_X] == spikeID){ //Spikes kill you if you land on it
-                hitSpikes = true;
+                if(invulnerableTime < 0){
+                    health-=1;
+                    invulnerableTime=2;
                 }
-            }
-        for(int ID: collectables){
-            if(map.mapData[map_Y][map_X] == ID){
-                cout<<"HAS KEY"<<endl;
-                hasKey=true;
             }
         }
     }
@@ -200,6 +224,12 @@ bool playerCollideBottom(){ //handle bottom collision with block
                 JumpOn = true;
                 return true;
             }
+            if (map.mapData[map_Y+1][map_X] == spikeID){ //Spikes kill you if you land on it
+                if(invulnerableTime < 0){
+                    health-=1;
+                    invulnerableTime=2;
+                }
+            }
         }
     }
     players[0].collidedBottom = false;
@@ -220,17 +250,21 @@ bool playerCollideLeft(){ //handle left collision with block
             }
             if (map.mapData[map_Y][map_X+1] == endgateID){ //Allow player to advance to the next level if he has the key
                 if (hasKey==true){
+                    health=defaultHealth;
+                    hasKey=false;
                     currentGameLevel+=1;
                     enemies.clear();
+                    levelkeys.clear();
+                    //players.clear();
                     map.entities.clear();
                     if(currentGameLevel == 2){
-                        map.Load("Level 2.txt");
+                        map.Load("Level2.txt");
+                        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                     }
                     else{
-                        map.Load("Level 3.txt");
+                        map.Load("Level3.txt");
+                        glClearColor(0.72f, 0.61f, 1.0f, 1.0f);
                     }
-                    players[0].position.x = 0/players[0].sprite.size;
-                    players[0].position.y = -4/players[0].sprite.size;
                     vertexData.clear();
                     texCoordData.clear();
                     for(int y=0; y < map.mapHeight; y++) {
@@ -258,10 +292,10 @@ bool playerCollideLeft(){ //handle left collision with block
                                 });
                             }
                         }
-                        players[0].position.x = 0*tileSize;
-                        players[0].position.y = 10 *(-tileSize);
+                        players[0].position.x = 3*tileSize;
+                        players[0].position.y = 22*(-tileSize);
                     }
-                    //renderEntities();
+                    renderEntities();
                 }
             }
         }
@@ -283,16 +317,20 @@ bool playerCollideRight(){ //handle right collision with block
             }
             if (map.mapData[map_Y][map_X+1] == endgateID){ //Allow player to advance to the next level if he has the key
                 if (hasKey==true){
+                    health=defaultHealth;
+                    hasKey=false;
                     currentGameLevel+=1;
                     enemies.clear();
+                    levelkeys.clear();
+                    //players.clear();
                     map.entities.clear();
                     if(currentGameLevel == 2){
-                        map.Load("Level 2.txt");
+                        map.Load("Level2.txt");
+                        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                     }
                     else{
-                        map.Load("Level 3.txt");
-                        players[0].position.x = 0/players[0].sprite.size;
-                        players[0].position.y = 10/players[0].sprite.size;
+                        map.Load("Level3.txt");
+                        glClearColor(0.72f, 0.61f, 1.0f, 1.0f);
                     }
                     vertexData.clear();
                     texCoordData.clear();
@@ -321,10 +359,10 @@ bool playerCollideRight(){ //handle right collision with block
                                 });
                             }
                         }
-                        players[0].position.x = 0*tileSize;
-                        players[0].position.y = 10 *(-tileSize);
+                        players[0].position.x = 3*tileSize;
+                        players[0].position.y = 22*(-tileSize);
                     }
-                    //renderEntities();
+                    renderEntities();
                 }
                 }
             }
@@ -385,11 +423,11 @@ void EnemyAnimation(Entity& enemy){
     else if (playerID==81){
         playerID = 80;
     }
-    if(playerID == 80){ //if Ghost
-        playerID = 81;
+    if(playerID == 103){ //if Ghost
+        playerID = 104;
     }
-    else if (playerID==81){
-        playerID = 80;
+    else if (playerID==104){
+        playerID = 103;
     }
     enemy.sprite.u = (playerID % sprite_count_x) / (float) sprite_count_x;
     enemy.sprite.v = (playerID / sprite_count_x) / (float) sprite_count_y;
@@ -542,7 +580,7 @@ public:
     
     void Update(float elapsedUpdate = elapsed){
         if (health == 0){
-            gameOver();
+            mode = STATE_GAME_OVER;
         }
         glClear(GL_COLOR_BUFFER_BIT);
         modelMatrix = glm::mat4(1.0f);
@@ -550,14 +588,14 @@ public:
         
         //Handle player and enemy movement
         if(keys[SDL_SCANCODE_LEFT]) {
-            players[0].velocity.x = -0.32;
+            players[0].velocity.x = -2.5;
             playerAnimationTimer -= elapsedUpdate;
             if(playerAnimationTimer < 0){
                 PlayerAnimation();
                 playerAnimationTimer = 0.1;
             }
         } else if(keys[SDL_SCANCODE_RIGHT]) {
-            players[0].velocity.x = 0.32;
+            players[0].velocity.x = 2.5;
             playerAnimationTimer -= elapsedUpdate;
             if(playerAnimationTimer < 0){
                 PlayerAnimation();
@@ -589,26 +627,19 @@ public:
         }
         for(Entity& enemy: enemies){ //Collision with enemy
                 if(players[0].collision(enemy)){
-                    if(invulnerableTime < 0){
+                    if(invulnerableTime <= 0){
                         health-=1;
-                        invulnerableTime=2;
+                        invulnerableTime=1;
                     }
                 }
             }
-        if (hitSpikes==true){
-            if(invulnerableTime < 0){
-                health-=1;
-                invulnerableTime=2;
-                hitSpikes=false;
-            }
-        }
-        invulnerableTime-=elapsedUpdate;
-        if (levelkeys.empty() == false){
-            if(players[0].collision(levelkeys[0])){
+        for(Entity& levelkey: levelkeys){ //Collision with keys
+            if(players[0].collision(levelkey)){
+                hasKey=true;
                 levelkeys.pop_back();
             }
         }
-        
+        invulnerableTime-=elapsedUpdate;
         players[0].update(elapsedUpdate);
         viewMatrix = glm::mat4(1.0f);
         viewMatrix = glm::translate(viewMatrix, glm::vec3(-players[0].position.x,-players[0].position.y,0.0f));
@@ -618,7 +649,13 @@ public:
     void Render(){
         if (!win){
             drawMap();
-            DrawText(program, fontTexture, "Health:"+ std::to_string(health),players[0].position.x-1.6,players[0].position.y+0.95,0.05,0.00);
+            DrawText(program, fontTexture, "Health:"+ to_string(health),players[0].position.x-1.65,players[0].position.y+0.90,0.07,0.00);
+            if (hasKey==false){
+             DrawText(program, fontTexture, "Key: Not Found",players[0].position.x-1.65,players[0].position.y+0.77,0.07,0.00);
+            }
+            else{
+                 DrawText(program, fontTexture, "Key: Acquired",players[0].position.x-1.65,players[0].position.y+0.77,0.07,0.00);
+            }
             for(Entity& e: players){
                 e.Draw(program, elapsed);
             }
@@ -634,13 +671,43 @@ public:
             }
         }
         else {
-            DrawText(program, fontTexture, "You Win!", 0.0, -0.90, 0.40, 0.01); //Display YOU WIN to player
+            DrawText(program, fontTexture, "YOU WIN!", players[0].position.x-0.82,players[0].position.y, 0.20, 0.01); //Display YOU WIN to player
+            glClearColor(0.0, 0.0, 0.0, 0.0);
         }
     }
     void Clean(){}
 };
+
+class GameOver {
+public:
+    void Render() {
+        DrawText(program, fontTexture, "GAME OVER", players[0].position.x-0.82,players[0].position.y, 0.20, 0.01); //Display GAME OVER to player
+    }
+    void Update() {
+        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+    }
+    void ProcessEvents(){
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
+                done = true;
+            }
+            else if (event.type == SDL_KEYDOWN){
+                if(event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
+                    mode = STATE_GAME_LEVEL;
+                    lastFrameTicks = (float)SDL_GetTicks()/1000.0f;
+                }
+            }
+        }
+    }
+    void CleanUp(){
+        
+    }
+};
 mainMenu menu;
 Game game;
+GameOver gameOver;
+
 void Setup(){
     game.Setup();
 }
@@ -653,8 +720,12 @@ void Events(){
         case STATE_GAME_LEVEL:
             game.Events();
             break;
+        case STATE_GAME_OVER:
+            gameOver.ProcessEvents();
+            break;
     }
 }
+
 
 void Update(float elapsedUpdate = elapsed){
     switch(mode){
@@ -663,6 +734,9 @@ void Update(float elapsedUpdate = elapsed){
             break;
         case STATE_GAME_LEVEL:
             game.Update(elapsedUpdate);
+            break;
+        case STATE_GAME_OVER:
+            gameOver.Update();
             break;
     }
 }
@@ -675,6 +749,9 @@ void Render(){
         case STATE_GAME_LEVEL:
             game.Render();
             break;
+        case STATE_GAME_OVER:
+            gameOver.Render();
+            break;
     }
 }
 
@@ -686,6 +763,9 @@ void Clean(){
         case STATE_GAME_LEVEL:
             game.Clean();
             break;
+        case STATE_GAME_OVER:
+            gameOver.CleanUp();
+            break;
     }
 }
 
@@ -693,50 +773,15 @@ int main(int argc, char *argv[]){
     
     Setup();
     
+    //Create player sprite
     float spriteWidth = 1.0f/(float)sprite_count_x;
     float spriteHeight = 1.0f/(float)sprite_count_y;
-    
-    //Create player sprite
     float u = (float)((98) % sprite_count_x) / (float) sprite_count_x;
     float v = (float)((98) / sprite_count_x) / (float) sprite_count_y;
-    
     SheetSprite mySprite = SheetSprite(spriteSheetTexture, u, v,spriteWidth , spriteHeight, tileSize);
+    players.push_back(Entity(0,-4,0,0,mySprite.width,mySprite.height,0,0,0,mySprite.u,mySprite.v,mySprite.textureID, mySprite.size));
     
-    //Create enemy sprite
-    u = (float)((80) % sprite_count_x) / (float) sprite_count_x;
-    v = (float)((80) / sprite_count_x) / (float) sprite_count_y;
-    
-    SheetSprite enemy = SheetSprite(spriteSheetTexture, u, v,spriteWidth , spriteHeight, tileSize);
-    
-    //Create key sprite
-    u = (float)((86) % sprite_count_x) / (float) sprite_count_x;
-    v = (float)((86) / sprite_count_x) / (float) sprite_count_y;
-    
-    SheetSprite key = SheetSprite(spriteSheetTexture,u, v, spriteWidth , spriteHeight, tileSize);
-    
-    //Instantiate new entites
-    Entity newPlayer(0,-4,0,0,mySprite.width,mySprite.height,0,0,0,mySprite.u,mySprite.v,mySprite.textureID, mySprite.size);
-    
-    Entity newEnemy(1,-1.0,0,0,enemy.width,enemy.height,0,0,0,enemy.u,enemy.v,enemy.textureID, enemy.size);
-    
-    Entity newKey(1, -1.0,0, 0., tileSize, tileSize, 0, 0, 0, key.u , key.v, key.textureID, key.size);
-    
-    
-    
-    //Push entities into their respective vectors
-    players.push_back(newPlayer);
-    enemies.push_back(newEnemy);
-    levelkeys.push_back(newKey);
-    for(FlareMapEntity ent: map.entities){
-        if(ent.type == "enemy"){
-            float u = (float)((102) % sprite_count_x) / (float) sprite_count_x;
-            float v = (float)((102) / sprite_count_x) / (float) sprite_count_y;
-            float spriteWidth = 1.0f/(float)sprite_count_x;
-            float spriteHeight = 1.0f/(float)sprite_count_y;
-            SheetSprite enemy = SheetSprite(spriteSheetTexture,u, v,spriteWidth, spriteHeight, tileSize);
-//            enemies.push_back(enemy(ent.x*tileSize,ent.y*-tileSize, 0.07,0,enemy.width,enemy.height, u, v, enemy.textureID, enemy.size, &map, &palpables, &entities[0]));
-        }
-    }
+    renderEntities();
     
     while (!done) {
         float ticks = (float)SDL_GetTicks()/1000.0f;

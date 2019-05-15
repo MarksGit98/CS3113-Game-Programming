@@ -23,6 +23,7 @@
 		A136555F2282141A00AC76E0 /* Level2.txt in Resources */ = {isa = PBXBuildFile; fileRef = A136555C2282141A00AC76E0 /* Level2.txt */; };
 		A13655602282141A00AC76E0 /* Level3.txt in Resources */ = {isa = PBXBuildFile; fileRef = A136555D2282141A00AC76E0 /* Level3.txt */; };
 		A13655612282141A00AC76E0 /* Level1.txt in Resources */ = {isa = PBXBuildFile; fileRef = A136555E2282141A00AC76E0 /* Level1.txt */; };
+		A1365563228C0F3300AC76E0 /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1365562228C0F3300AC76E0 /* SDL2_mixer.framework */; };
 		A16A389422720EC3004A37E7 /* SheetSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A16A389222720EC3004A37E7 /* SheetSprite.cpp */; };
 		A16A389722720F36004A37E7 /* FlareMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A16A389522720F36004A37E7 /* FlareMap.cpp */; };
 		A16A389A22720F7B004A37E7 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A16A389822720F7B004A37E7 /* Entity.cpp */; };
@@ -53,6 +54,7 @@
 		A136555C2282141A00AC76E0 /* Level2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Level2.txt; sourceTree = "<group>"; };
 		A136555D2282141A00AC76E0 /* Level3.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Level3.txt; sourceTree = "<group>"; };
 		A136555E2282141A00AC76E0 /* Level1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Level1.txt; sourceTree = "<group>"; };
+		A1365562228C0F3300AC76E0 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = NYUCodebase/XcodeFrameworks/SDL2_mixer.framework; sourceTree = "<group>"; };
 		A16A389222720EC3004A37E7 /* SheetSprite.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SheetSprite.cpp; sourceTree = "<group>"; };
 		A16A389322720EC3004A37E7 /* SheetSprite.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SheetSprite.hpp; sourceTree = "<group>"; };
 		A16A389522720F36004A37E7 /* FlareMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FlareMap.cpp; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D5AC2D019AE6280004CB1BF /* OpenGL.framework in Frameworks */,
+				A1365563228C0F3300AC76E0 /* SDL2_mixer.framework in Frameworks */,
 				6D5A86AE19AE5C710066C1FD /* Cocoa.framework in Frameworks */,
 				6D5A86E319AE5CD10066C1FD /* SDL2.framework in Frameworks */,
 				6D5AC2D219AE6A1E004CB1BF /* SDL2_image.framework in Frameworks */,
@@ -98,6 +101,7 @@
 		6D5A86AC19AE5C710066C1FD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A1365562228C0F3300AC76E0 /* SDL2_mixer.framework */,
 				6D5AC2D119AE6A1E004CB1BF /* SDL2_image.framework */,
 				6D5AC2CF19AE6280004CB1BF /* OpenGL.framework */,
 				6D5A86E219AE5CD10066C1FD /* SDL2.framework */,
@@ -345,6 +349,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"$(PROJECT_DIR)/NYUCodebase/XcodeFrameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
@@ -368,6 +373,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"$(PROJECT_DIR)/NYUCodebase/XcodeFrameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";

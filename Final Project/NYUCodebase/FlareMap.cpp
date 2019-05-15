@@ -74,6 +74,7 @@ bool FlareMap::ReadLayerData(std::ifstream &stream) {
     return true;
 }
 
+
 bool FlareMap::ReadEntityData(std::ifstream &stream) {
     std::string line;
     std::string type;
@@ -100,6 +101,7 @@ bool FlareMap::ReadEntityData(std::ifstream &stream) {
     }
     return true;
 }
+
 void FlareMap::Load(const std::string fileName) {
     std::ifstream infile(fileName);
     if(infile.fail()) {
@@ -113,9 +115,8 @@ void FlareMap::Load(const std::string fileName) {
             }
         } else if(line == "[layer]") {
             ReadLayerData(infile);
-        } else if(line == "[ObjectsLayer]") {
+        } else if(line == "[Object Layer 1]") {
             ReadEntityData(infile);
         }
     }
 }
-
