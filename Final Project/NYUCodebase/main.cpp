@@ -17,14 +17,6 @@
 #define FIXED_TIMESTEP 0.0166666f
 #define MAX_TIMESTEPS 6
 
-//Add sound
-//Amimate enemies (and figure out playerID to fix player animation
-//Figure out shooting
-//Figure out key entity
-//Make sure game state changes work
-//Make sure enemy and player collision works
-
-
 using namespace std;
 
 glm::mat4 projectionMatrix = glm::mat4(1.0f);
@@ -60,6 +52,8 @@ vector<int> palpables = {32,33,34,35,32,17,100,7}; //IDs of collidable blocks
 vector<int> collectables = {keyID};
 int spikeID = 100;
 int playerID = 98;
+int minionID = 80;
+int ghostID = 103;
 int sprite_count_x = 16;
 int sprite_count_y = 8;
 float tileSize = 0.15;
@@ -68,12 +62,13 @@ FlareMap map;
 float gravity = 0.0075f;
 float accumulator = 0.0f;
 bool JumpOn = false;
-int defaultHealth = 10;
+int defaultHealth = 3;
 int health = defaultHealth;
-int currentGameLevel = 3;
+int currentGameLevel = 2;
 SDL_Window* displayWindow;
 
 float playerAnimationTimer = 0.10;
+float enemyAnimationTimer = 0.10;
 
 GLuint LoadTexture(const char *filePath) {
     int w,h,comp;
@@ -259,11 +254,11 @@ bool playerCollideLeft(){ //handle left collision with block
                     levelkeys.clear();
                     //players.clear();
                     map.entities.clear();
-                    if(currentGameLevel == 2){
+                    if(currentGameLevel == 1){
                         map.Load("Level2.txt");
                         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                     }
-                    else if(currentGameLevel==1){
+                    else if(currentGameLevel==2){
                         map.Load("Level3.txt");
                         glClearColor(0.72f, 0.61f, 1.0f, 1.0f);
                     }
@@ -329,11 +324,11 @@ bool playerCollideRight(){ //handle right collision with block
                     levelkeys.clear();
                     //players.clear();
                     map.entities.clear();
-                    if(currentGameLevel == 2){
+                    if(currentGameLevel == 1){
                         map.Load("Level2.txt");
                         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                     }
-                    else if (currentGameLevel==1){
+                    else if (currentGameLevel==2){
                         map.Load("Level3.txt");
                         glClearColor(0.72f, 0.61f, 1.0f, 1.0f);
                     }
@@ -376,10 +371,8 @@ bool playerCollideRight(){ //handle right collision with block
     }
 
 bool enemyCollideTop(Entity& enemy){ //handle top collision with block
-    int map_X = 0;
-    int map_Y = 0;
-    map_X = (enemy.position.x / tileSize);
-    map_Y = ((enemy.position.y + (players[0].height / 2)) / -tileSize);
+    int map_X = (enemy.position.x / tileSize);
+    int map_Y = ((enemy.position.y + (enemy.height / 2)) / -tileSize);
     
     if(map_X < map.mapWidth && map_Y < map.mapHeight){
         for(int ID: palpables){
@@ -394,10 +387,8 @@ bool enemyCollideTop(Entity& enemy){ //handle top collision with block
 }
 
 bool enemyCollideBottom(Entity& enemy){ //handle bottom collision with block
-    int map_X = 0;
-    int map_Y = 0;
-    map_X = (enemy.position.x / tileSize);
-    map_Y = ((enemy.position.y - (tileSize/ 2)) / -tileSize);
+    int map_X = (enemy.position.x / tileSize);
+    int map_Y = ((enemy.position.y - (tileSize/ 2)) / -tileSize);
     
     if(map_X < map.mapWidth && map_Y < map.mapHeight){
         for(int tileID: palpables){
@@ -411,33 +402,6 @@ bool enemyCollideBottom(Entity& enemy){ //handle bottom collision with block
     enemy.collidedBottom = false;
     return false;
 }
-void PlayerAnimation(){
-    if(playerID == 98){
-        playerID = 99;
-    }
-    else if (playerID==99){
-        playerID = 98;
-    }
-    players[0].sprite.u = (playerID % sprite_count_x) / (float) sprite_count_x;
-    players[0].sprite.v = (playerID / sprite_count_x) / (float) sprite_count_y;
-}
-void EnemyAnimation(Entity& enemy){
-    if(playerID == 80){ //if Minion
-        playerID = 81;
-    }
-    else if (playerID==81){
-        playerID = 80;
-    }
-    if(playerID == 103){ //if Ghost
-        playerID = 104;
-    }
-    else if (playerID==104){
-        playerID = 103;
-    }
-    enemy.sprite.u = (playerID % sprite_count_x) / (float) sprite_count_x;
-    enemy.sprite.v = (playerID / sprite_count_x) / (float) sprite_count_y;
-}
-
 bool enemyCollideLeft(Entity &enemy){ //handle left collision with block
     int map_X = 0;
     int map_Y = 0;
@@ -449,6 +413,10 @@ bool enemyCollideLeft(Entity &enemy){ //handle left collision with block
             if(map.mapData[map_Y][map_X] == tileID){
                 enemy.position.x += fabs(((tileSize * map_X) + tileSize) - (enemy.position.x - tileSize/2))+0.001;
                 return true;
+            }
+            if(map.mapData[map_Y][map_X-1] == 0){
+                enemy.position.x *=-1;
+                enemy.velocity.x *=-1;
             }
         }
     }
@@ -468,10 +436,50 @@ bool enemyCollideRight(Entity& enemy){ //handle right collision with block
                 enemy.position.x -= fabs(((tileSize * map_X) + tileSize) - (enemy.position.x + tileSize/2))+0.001;
                 return true;
             }
+            if(map.mapData[map_Y][map_X+1] == 0){
+                enemy.position.x *=-1;
+                enemy.velocity.x *=-1;
+            }
         }
     }
     return false;
 }
+void PlayerAnimation(){
+    if(playerID == 98){
+        playerID = 99;
+    }
+    else if (playerID==99){
+        playerID = 98;
+    }
+    players[0].sprite.u = (playerID % sprite_count_x) / (float) sprite_count_x;
+    players[0].sprite.v = (playerID / sprite_count_x) / (float) sprite_count_y;
+}
+void EnemyAnimation(Entity& enemy){
+    if(minionID == 80){ //if Minion
+        minionID = 81;
+        enemy.sprite.u = (minionID % sprite_count_x) / (float) sprite_count_x;
+        enemy.sprite.v = (minionID / sprite_count_x) / (float) sprite_count_y;
+    }
+    else if (minionID==81){
+        minionID = 80;
+        enemy.sprite.u = (minionID % sprite_count_x) / (float) sprite_count_x;
+        enemy.sprite.v = (minionID / sprite_count_x) / (float) sprite_count_y;
+    }
+    
+    
+    if(ghostID == 103){ //if Ghost
+        ghostID = 102;
+        enemy.sprite.u = (ghostID % sprite_count_x) / (float) sprite_count_x;
+        enemy.sprite.v = (ghostID / sprite_count_x) / (float) sprite_count_y;
+    }
+    else if (ghostID==102){
+        ghostID = 103;
+        enemy.sprite.u = (ghostID % sprite_count_x) / (float) sprite_count_x;
+        enemy.sprite.v = (ghostID / sprite_count_x) / (float) sprite_count_y;
+    }
+    
+}
+
 class mainMenu {
 public:
     void Render() {
@@ -500,7 +508,6 @@ public:
                     lastFrameTicks = (float)SDL_GetTicks()/1000.0f;
                 }
             }
-            
         }
     }
     void Clean(){}
@@ -593,14 +600,14 @@ public:
         
         //Handle player and enemy movement
         if(keys[SDL_SCANCODE_LEFT]) {
-            players[0].velocity.x = -2.5;
+            players[0].velocity.x = -0.55;
             playerAnimationTimer -= elapsedUpdate;
             if(playerAnimationTimer < 0){
                 PlayerAnimation();
                 playerAnimationTimer = 0.1;
             }
         } else if(keys[SDL_SCANCODE_RIGHT]) {
-            players[0].velocity.x = 2.5;
+            players[0].velocity.x = 0.55;
             playerAnimationTimer -= elapsedUpdate;
             if(playerAnimationTimer < 0){
                 PlayerAnimation();
@@ -620,16 +627,28 @@ public:
             players[0].velocity.x = 0;
         }
         for (Entity& enemy: enemies){
-            enemy.velocity.y -= gravity;
-            enemy.velocity.x = 0.25;
-            if(enemyCollideBottom(enemy)||enemyCollideTop(enemy)){
-                enemy.velocity.y = 0;
-            }
             
-            if(enemyCollideLeft(enemy)||enemyCollideRight(enemy)){
-                enemy.velocity.x = 0;
+            if(elapsedUpdate<=-0.001){
+                enemy.position.x +=0.001;
+                enemy.velocity.x = 0.5;
+            }
+            else{
+                 enemy.position.x -=0.001;
+                 enemy.velocity.x = -0.5;
+            }
+            enemy.velocity.y -= gravity;
+            
+            enemyCollideLeft(enemy);
+            enemyCollideRight(enemy);
+            enemyCollideTop(enemy);
+            enemyCollideBottom(enemy);
+            if(enemyAnimationTimer < 0){
+                EnemyAnimation(enemy);
+                enemyAnimationTimer = 0.1;
             }
         }
+        enemyAnimationTimer-=elapsedUpdate;
+        
         for(Entity& enemy: enemies){ //Collision with enemy
                 if(players[0].collision(enemy)){
                     if(invulnerableTime <= 0){
